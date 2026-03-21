@@ -2,7 +2,17 @@ import {
     ARGUMENT_TYPE,
     SlashCommandArgument,
     SlashCommandNamedArgument
-} from '../../../../slash-commands/SlashCommandArgument.js';
+} from '../../../../../slash-commands/SlashCommandArgument.js';
+
+import {SlashCommandEnumValue} from '../../../../../slash-commands/SlashCommandEnumValue.js';
+
+
+// const varType = [
+//     new SlashCommandEnumValue('scope', 'Scope Variable'),
+//     new SlashCommandEnumValue('local', 'Local Variable'),
+//     new SlashCommandEnumValue('global', 'Global Variable'),
+//     new SlashCommandEnumValue('inline', 'Inline Value'),
+// ];
 
 
 
@@ -137,7 +147,7 @@ const LIST_SHIFT_CONFIG = {
 const LIST_SPLICE_CONFIG = {
     name: 'list-splice',
     aliases: ['arr-splice'],
-    returns: '',
+    returns: 'The spliced list || The deleted elements',
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({
             name: 'start',
@@ -158,7 +168,7 @@ const LIST_SPLICE_CONFIG = {
         SlashCommandNamedArgument.fromProps({
             name: 'jsReturn',
             aliasList: ['js'],
-            description: 'Return the new list length instead of the list itself',
+            description: 'Return the deleted elements instead of the spliced list',
             typeList: [ARGUMENT_TYPE.BOOLEAN],
         }),
         SlashCommandNamedArgument.fromProps({
@@ -193,13 +203,18 @@ const LIST_SPLICE_CONFIG = {
 
 const LIST_SORT_CONFIG = {
     name: 'list-sort',
-    aliasList: ['arr-sort'],
-    returns: '',
+    aliases: ['arr-sort'],
+    returns: 'The sorted list',
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({
             name: 'reverse',
             description: 'Sort the list in reverse order',
             typeList: [ARGUMENT_TYPE.BOOLEAN],
+        }),
+        SlashCommandNamedArgument.fromProps({
+            name: 'sortfn',
+            description: 'A custom sorting function to use',
+            typeList: [ARGUMENT_TYPE.CLOSURE],
         }),
     ],
     unnamedArgumentList: [
@@ -213,12 +228,93 @@ const LIST_SORT_CONFIG = {
 
 const LIST_REVERSE_CONFIG = {
     name: 'list-reverse',
-    aliasList: ['arr-reverse'],
-    returns: '',
+    aliases: ['arr-reverse'],
+    returns: 'The reversed list',
     unnamedArgumentList: [
         SlashCommandArgument.fromProps({
             description: 'The target list to reverse',
             typeList: [ARGUMENT_TYPE.STRING, ARGUMENT_TYPE.LIST, ARGUMENT_TYPE.VARIABLE_NAME],
+            isRequired: true,
+        }),
+    ],
+};
+
+// FILL / COPYWITHIN
+
+const LIST_FILL_CONFIG = {
+    name: 'list-fill',
+    aliases: ['arr-fill'],
+    returns: 'The filled list',
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({
+            name: 'start',
+            description: 'The index to start filling from',
+            typeList: [ARGUMENT_TYPE.NUMBER],
+        }),
+        SlashCommandNamedArgument.fromProps({
+            name: 'end',
+            description: 'The index to end filling at',
+            typeList: [ARGUMENT_TYPE.NUMBER],
+        }),
+        SlashCommandNamedArgument.fromProps({
+            name: 'noParse',
+            description: "Don't parse values into their appropriate datatypes",
+            typeList: [ARGUMENT_TYPE.BOOLEAN],
+        }),
+    ],
+    unnamedArgumentList: [
+        SlashCommandArgument.fromProps({
+            description: 'The target list to fill',
+            typeList: [ARGUMENT_TYPE.STRING, ARGUMENT_TYPE.LIST, ARGUMENT_TYPE.VARIABLE_NAME],
+            isRequired: true,
+        }),
+        SlashCommandArgument.fromProps({
+            description: 'The value to fill the list with',
+            typeList: [
+                ARGUMENT_TYPE.STRING,
+                ARGUMENT_TYPE.NUMBER,
+                ARGUMENT_TYPE.BOOLEAN,
+                ARGUMENT_TYPE.LIST,
+                ARGUMENT_TYPE.DICTIONARY,
+            ],
+            isRequired: true,
+        }),
+    ],
+    splitUnnamedArgument: true,
+    splitUnnamedArgumentCount: 2,
+};
+
+const LIST_COPYWITHIN_CONFIG = {
+    name: 'list-copywithin',
+    aliases: ['arr-copywithin'],
+    returns: 'The list with the copied elements',
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({
+            name: 'target',
+            description: 'The index to start copying to',
+            typeList: [ARGUMENT_TYPE.NUMBER],
+            isRequired: true,
+        }),
+        SlashCommandNamedArgument.fromProps({
+            name: 'start',
+            description: 'The index to start copying from',
+            typeList: [ARGUMENT_TYPE.NUMBER],
+            isRequired: true,
+        }),
+        SlashCommandNamedArgument.fromProps({
+            name: 'end',
+            description: 'The index to end copying at',
+            typeList: [ARGUMENT_TYPE.NUMBER],
+        }),
+    ],
+    unnamedArgumentList: [
+        SlashCommandArgument.fromProps({
+            description: 'The target list to copy within',
+            typeList: [
+                ARGUMENT_TYPE.STRING,
+                ARGUMENT_TYPE.LIST,
+                ARGUMENT_TYPE.VARIABLE_NAME,
+            ],
             isRequired: true,
         }),
     ],
@@ -232,4 +328,6 @@ export const list_configs = {
     list_splice: LIST_SPLICE_CONFIG,
     list_sort: LIST_SORT_CONFIG,
     list_reverse: LIST_REVERSE_CONFIG,
+    list_fill: LIST_FILL_CONFIG,
+    list_copywithin: LIST_COPYWITHIN_CONFIG
 };

@@ -1,5 +1,5 @@
-import {SlashCommandParser} from '../../../../slash-commands/SlashCommandParser.js';
-import {SlashCommand} from '../../../../slash-commands/SlashCommand.js';
+import {SlashCommandParser} from '../../../../../slash-commands/SlashCommandParser.js';
+import {SlashCommand} from '../../../../../slash-commands/SlashCommand.js';
 
 import {list_configs} from "./configs.js";
 import {list_docs} from "./docs.js";
@@ -70,5 +70,21 @@ export function registerSlashCommands() {
             return list_callbacks.list_sort_reverse(args, value, true);
         },
         helpString: list_docs.list_reverse,
+    }));
+
+    // FILL / COPYWITHIN
+
+    // Register list-fill command
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        ...list_configs.list_fill,
+        callback: list_callbacks.list_fill,
+        helpString: list_docs.list_fill,
+    }));
+
+    // Register list-copywithin command
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        ...list_configs.list_copywithin,
+        callback: list_callbacks.list_copywithin,
+        helpString: list_docs.list_copywithin,
     }));
 }

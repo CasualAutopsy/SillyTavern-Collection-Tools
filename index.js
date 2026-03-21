@@ -1,4 +1,4 @@
-import {registerSlashCommands} from "./commands/registry.js";
+import {registerSlashCommands} from "./commands/mutable/registry.js";
 
 
 
