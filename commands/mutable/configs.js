@@ -28,7 +28,7 @@ const var_type = arg_types.VARIABLE_NAME;
 
 const LIST_PUSH_CONFIG = {
     name: 'list-push',
-    aliases: ['arr-push'],
+    aliases: ['arr-push', 'nox-list-push'],
     returns: 'The list with the pushed value(s) || The new list\'s length',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -67,7 +67,7 @@ const LIST_PUSH_CONFIG = {
 
 const LIST_POP_CONFIG = {
     name: 'list-pop',
-    aliases: ['arr-pop'],
+    aliases: ['arr-pop', 'nox-list-pop'],
     returns: 'The popped value from the list || The list without the popped value',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -90,7 +90,7 @@ const LIST_POP_CONFIG = {
 
 const LIST_UNSHIFT_CONFIG = {
     name: 'list-unshift',
-    aliases: ['arr-unshift'],
+    aliases: ['arr-unshift', 'nox-list-unshift'],
     returns: 'The list with the unshifted value(s) || The new list\'s length',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -129,7 +129,7 @@ const LIST_UNSHIFT_CONFIG = {
 
 const LIST_SHIFT_CONFIG = {
     name: 'list-shift',
-    aliases: ['arr-shift'],
+    aliases: ['arr-shift', 'nox-list-shift'],
     returns: 'The shifted value from the list || The list without the shifted value',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -152,7 +152,7 @@ const LIST_SHIFT_CONFIG = {
 
 const LIST_SPLICE_CONFIG = {
     name: 'list-splice',
-    aliases: ['arr-splice'],
+    aliases: ['arr-splice', 'nox-list-splice'],
     returns: 'The spliced list || The deleted elements',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -209,7 +209,7 @@ const LIST_SPLICE_CONFIG = {
 
 const LIST_SORT_CONFIG = {
     name: 'list-sort',
-    aliases: ['arr-sort'],
+    aliases: ['arr-sort', 'nox-list-sort'],
     returns: 'The sorted list',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -229,7 +229,7 @@ const LIST_SORT_CONFIG = {
 
 const LIST_REVERSE_CONFIG = {
     name: 'list-reverse',
-    aliases: ['arr-reverse'],
+    aliases: ['arr-reverse', 'nox-list-reverse'],
     returns: 'The reversed list',
     unnamedArgumentList: [
         slash_arg.fromProps({
@@ -244,7 +244,7 @@ const LIST_REVERSE_CONFIG = {
 
 const LIST_FILL_CONFIG = {
     name: 'list-fill',
-    aliases: ['arr-fill'],
+    aliases: ['arr-fill', 'nox-list-fill'],
     returns: 'The filled list',
     namedArgumentList: [
         slash_named_arg.fromProps({
@@ -287,7 +287,7 @@ const LIST_FILL_CONFIG = {
 
 const LIST_COPYWITHIN_CONFIG = {
     name: 'list-copywithin',
-    aliases: ['arr-copywithin'],
+    aliases: ['arr-copywithin', 'nox-list-copywithin'],
     returns: 'The list with the copied elements',
     namedArgumentList: [
         slash_named_arg.fromProps({

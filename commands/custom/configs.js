@@ -12,7 +12,7 @@ const list_type = arg_types.LIST
 
 const LIST_ZIP_CONFIG = {
     name: 'list-zip',
-    aliases: ['arr-zip'],
+    aliases: ['arr-zip', 'nox-list-zip'],
     returns: 'The zipped list',
     unnamedArgumentList: [
         slash_arg.fromProps({
@@ -30,7 +30,7 @@ const LIST_ZIP_CONFIG = {
 
 const LIST_ZIP_LONGEST_CONFIG = {
     name: 'list-zip-longest',
-    aliases: ['arr-zip-longest'],
+    aliases: ['arr-zip-longest', 'nox-list-zip-longest'],
     returns: 'The zipped list',
     unnamedArgumentList: [
         slash_arg.fromProps({
