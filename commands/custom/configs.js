@@ -1,8 +1,13 @@
-import {
-    ARGUMENT_TYPE,
-    SlashCommandArgument,
-    SlashCommandNamedArgument
-} from '../../../../../slash-commands/SlashCommandArgument.js';
+import {getContext} from '../../../../../st-context.js';
+
+const context = getContext();
+
+const slash_arg = context.SlashCommandArgument;
+
+const arg_types = context.ARGUMENT_TYPE;
+
+const string_type = arg_types.STRING;
+const list_type = arg_types.LIST
 
 
 const LIST_ZIP_CONFIG = {
@@ -10,11 +15,11 @@ const LIST_ZIP_CONFIG = {
     aliases: ['arr-zip'],
     returns: 'The zipped list',
     unnamedArgumentList: [
-        SlashCommandArgument.fromProps({
+        slash_arg.fromProps({
             description: 'The lists to zip',
             typeList: [
-                ARGUMENT_TYPE.STRING,
-                ARGUMENT_TYPE.LIST,
+                string_type,
+                list_type,
             ],
             isRequired: true,
             acceptsMultiple: true,
@@ -28,11 +33,11 @@ const LIST_ZIP_LONGEST_CONFIG = {
     aliases: ['arr-zip-longest'],
     returns: 'The zipped list',
     unnamedArgumentList: [
-        SlashCommandArgument.fromProps({
+        slash_arg.fromProps({
             description: 'The lists to zip',
             typeList: [
-                ARGUMENT_TYPE.STRING,
-                ARGUMENT_TYPE.LIST,
+                string_type,
+                list_type,
             ],
             isRequired: true,
             acceptsMultiple: true,
