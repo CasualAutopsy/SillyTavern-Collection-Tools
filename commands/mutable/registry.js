@@ -8,11 +8,11 @@ import  {list_callbacks} from './lib.js';
 
 const context = getContext();
 
-const slash_parser = context.slash_parser;
-const slash_command = context.slash_command;
+const slash_parser = context.SlashCommandParser;
+const slash_command = context.SlashCommand;
 
 
-export function registerMutableslash_commands() {
+export function registerMutableSlashCommands() {
     // PUSH / POP
 
     // Register list-push command
