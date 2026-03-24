@@ -8,8 +8,8 @@ import {
 
 const context = getContext();
 
-const slash_named_arg = context.slash_named_arg;
-const slash_arg = context.slash_arg;
+const slash_named_arg = context.SlashCommandNamedArgument;
+const slash_arg = context.SlashCommandArgument;
 
 const arg_types = context.ARGUMENT_TYPE;
 
