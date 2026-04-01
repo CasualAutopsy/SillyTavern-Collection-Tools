@@ -1,12 +1,9 @@
-import {getContext} from '../../../../../st-context.js';
-
 import {list_configs} from "./configs.js";
+import  {list_callbacks} from './lib.js';
 import {list_docs} from "./docs.js";
 
-import  {list_callbacks} from './lib.js';
 
-
-const context = getContext();
+const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
 
 const slash_parser = context.SlashCommandParser;
 const slash_command = context.SlashCommand;

@@ -1,7 +1,4 @@
-import {getContext} from '../../../../../st-context.js';
-
-
-const context = getContext();
+const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
 
 const slash_named_arg = context.SlashCommandNamedArgument;
 const slash_arg = context.SlashCommandArgument;

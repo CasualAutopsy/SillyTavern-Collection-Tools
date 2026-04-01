@@ -1,33 +1,6 @@
-import {isTrueBoolean} from '../../../../../utils.js';
+const isTrueBoolean = (await import(/* webpackIgnore: true */ '/scripts/utils.js')).isTrueBoolean;
 
-import {getStorageType} from '../utils/vars.js';
-
-/**
- * Parses a value string into its appropriate JavaScript type.
- * Attempts JSON parsing first, then numeric conversion, then boolean strings.
- * @param {string} value - The value string to parse
- * @returns {*} - The parsed value in its appropriate type
- */
-function parseValue(value) {
-    // Try JSON parsing first (handles objects, arrays, numbers, booleans, null)
-    try {
-        return JSON.parse(value);
-    } catch {
-        // Try numeric conversion for plain numbers
-        const numericValue = parseFloat(value);
-        if (!isNaN(numericValue)) {
-            return numericValue;
-        }
-        // Handle boolean strings
-        if (value === 'true' || value === 'false') {
-            return isTrueBoolean(value);
-        }
-        // Return as string if no other conversion succeeds
-        return value;
-    }
-}
-
-
+import {getStorageType, parseValue} from '../../../utils.js';
 
 /**
  * Handles the /list-push slash command to add items to a list.
@@ -137,7 +110,7 @@ async function listSortReverseCMD(args, target, isReverse = false) {
  * @param {Array} [target, item] - Target list and value to fill with
  * @returns {*} - The new filled list
  */
-function listFillCMD(args, [target, item]) {
+async function listFillCMD(args, [target, item]) {
     // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
     item = !isTrueBoolean(args.noParse)
         ? parseValue(item)
@@ -159,7 +132,7 @@ function listFillCMD(args, [target, item]) {
  * @param {Array} target - Target list
  * @returns {*} - The new list with copied elements
  */
-function listCopyWithinCMD(args, target) {
+async function listCopyWithinCMD(args, target) {
     // Determine storage scope and get list
     const { list, setList } = getStorageType(target, args);
 

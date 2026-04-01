@@ -3,9 +3,9 @@
     "loading_order": 1,
     "requires": [],
     "optional": [],
-    "js": "index.js",
+    "js": "dist/index.js",
     "author": "CasualAutopsy",
-    "version": "0.3.0",
+    "version": "a.1.0",
     "homePage": "https://github.com/CasualAutopsy/SillyTavern-List-Tools",
     "auto_update": false
 }
