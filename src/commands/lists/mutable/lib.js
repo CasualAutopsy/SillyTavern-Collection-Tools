@@ -1,6 +1,6 @@
 const isTrueBoolean = (await import(/* webpackIgnore: true */ '/scripts/utils.js')).isTrueBoolean;
 
-import {isMutableVarCheck, parseValue} from '../../../utils.js';
+import {isMutableVarCheck, parseValue} from '../../../../utils.js';
 
 /**
  * Handles the /list-push slash command to add items the end of a list.

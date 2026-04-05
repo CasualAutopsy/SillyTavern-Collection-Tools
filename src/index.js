@@ -1,8 +1,8 @@
-import {registerMutableSlashCommands} from './commands/mutable/registry.js';
-import {registerRandomSlashCommands} from './commands/random/registry.js';
+import {registerMutableSlashCommands} from './commands/lists/mutable/registry.js';
+import {registerRandomSlashCommands} from './commands/collections/random/registry.js';
 
-import {registerRandomCollectionMacros} from './macros/random/registry.js';
-import {registerMutableListMacros} from './macros/mutable/registry.js';
+import {registerRandomCollectionMacros} from './macros/collections/random.js';
+import {registerMutableListMacros} from './macros/lists/mutable.js';
 
 
 

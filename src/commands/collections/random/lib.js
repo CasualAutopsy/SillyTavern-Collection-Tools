@@ -1,7 +1,7 @@
 import {sample, sampleSize, shuffle} from 'lodash-es';
 import {toSafeInteger} from 'lodash-es';
 
-import {isVarCheck} from '../../../utils.js';
+import {isVarCheck} from '../../../../utils.js';
 
 
 export async function collectionSampleCMD(args, target) {
