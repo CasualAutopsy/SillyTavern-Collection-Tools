@@ -1,91 +1,101 @@
-import {list_configs} from "./configs.js";
-import  {list_callbacks} from './lib.js';
+import {
+    listPopCMD, listShiftCMD,
+    listPushCMD, listUnshiftCMD,
+    listSpliceCMD,
+    listSortCMD, listReverseCMD,
+    listFillCMD,
+    listCopyWithinCMD
+} from './lib.js';
+
+import {
+    LIST_POP_CONFIG, LIST_SHIFT_CONFIG,
+    LIST_PUSH_CONFIG, LIST_UNSHIFT_CONFIG,
+    LIST_SPLICE_CONFIG,
+    LIST_SORT_CONFIG, LIST_REVERSE_CONFIG,
+    LIST_FILL_CONFIG, LIST_COPYWITHIN_CONFIG
+} from './configs.js';
+
 import {list_docs} from "./docs.js";
 
+/**
+ * Register all mutable slash commands.
+ */
+export async function registerMutableSlashCommands() {
+    const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
 
-const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
+    const slash_parser = context.SlashCommandParser;
+    const slash_command = context.SlashCommand;
 
-const slash_parser = context.SlashCommandParser;
-const slash_command = context.SlashCommand;
-
-
-export function registerMutableSlashCommands() {
     // PUSH / POP
 
-    // Register list-push command
+    // Register '/list-push' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_push,
-        callback: list_callbacks.list_push_unshift,
+        callback: listPushCMD,
+        ...LIST_PUSH_CONFIG,
         helpString: list_docs.list_push,
     }));
 
-    // Register list-pop command
+    // Register '/list-pop' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_pop,
-        callback: list_callbacks.list_pop_shift,
+        callback: listPopCMD,
+        ...LIST_POP_CONFIG,
         helpString: list_docs.list_pop,
     }));
 
     // SHIFT / UNSHIFT
 
-    // Register list-unshift command
+    // Register '/list-unshift' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_unshift,
-        callback: (args, value) => {
-            return list_callbacks.list_push_unshift(args, value, true);
-        },
+        callback: listUnshiftCMD,
+        ...LIST_UNSHIFT_CONFIG,
         helpString: list_docs.list_unshift,
     }));
 
-    // Register list-shift command
+    // Register '/list-shift' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_shift,
-        callback: (args, value) => {
-            return list_callbacks.list_pop_shift(args, value, true)
-        },
+        callback: listShiftCMD,
+        ...LIST_SHIFT_CONFIG,
         helpString: list_docs.list_shift,
     }));
 
     // SPLICE
 
-    // Register list-splice command
+    // Register '/list-splice' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_splice,
-        callback: list_callbacks.list_splice,
+        callback: listSpliceCMD,
+        ...LIST_SPLICE_CONFIG,
         helpString: list_docs.list_splice,
     }));
 
     // SORT / REVERSE
 
-    // Register list-sort command
+    // Register '/list-sort' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_sort,
-        callback: list_callbacks.list_sort_reverse,
+        callback: listSortCMD,
+        ...LIST_SORT_CONFIG,
         helpString: list_docs.list_sort,
     }));
 
-    // Register list-reverse command
+    // Register '/list-reverse' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_reverse,
-        callback: (args, value) => {
-            return list_callbacks.list_sort_reverse(args, value, true);
-        },
+        callback: listReverseCMD,
+        ...LIST_REVERSE_CONFIG,
         helpString: list_docs.list_reverse,
     }));
 
     // FILL / COPYWITHIN
 
-    // Register list-fill command
+    // Register '/list-fill' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_fill,
-        callback: list_callbacks.list_fill,
+        callback: listFillCMD,
+        ...LIST_FILL_CONFIG,
         helpString: list_docs.list_fill,
     }));
 
-    // Register list-copywithin command
+    // Register '/list-copywithin' command
     slash_parser.addCommandObject(slash_command.fromProps({
-        ...list_configs.list_copywithin,
-        callback: list_callbacks.list_copywithin,
+        callback: listCopyWithinCMD,
+        ...LIST_COPYWITHIN_CONFIG,
         helpString: list_docs.list_copywithin,
     }));
 }

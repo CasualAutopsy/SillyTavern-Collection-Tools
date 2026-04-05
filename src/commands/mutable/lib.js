@@ -1,154 +1,198 @@
 const isTrueBoolean = (await import(/* webpackIgnore: true */ '/scripts/utils.js')).isTrueBoolean;
 
-import {getStorageType, parseValue} from '../../../utils.js';
+import {isMutableVarCheck, parseValue} from '../../../utils.js';
 
 /**
- * Handles the /list-push slash command to add items to a list.
+ * Handles the /list-push slash command to add items the end of a list.
  *
- * @param {Object} args - Command arguments including flags like noParse, jsReturn
- * @param {Array} [target, ...items] - Target list identifier and items to push
- * @param {boolean} [isShift=false] - If true, uses unshift instead of push (adds to beginning)
- * @returns {number|string} - List length if jsReturn is true, otherwise JSON string of the list
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @param items - Items to push.
+ * @returns {number|Array} - Updated list or list length.
  */
-async function listPushUnshiftCMD(args, [target, ...items], isShift = false) {
+export async function listPushCMD(args, [target, ...items]) {
     // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
     items = !isTrueBoolean(args.noParse)
         ? items.map(item => parseValue(item))
         : items;
 
-    // Use varType to determine which variable type gets targeted.
-    const { list, setList } = getStorageType(target, args)
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
 
-    const listLength = isShift
-        ? list.unshift(...items)
-        : list.push(...items);
+    const listLength = list.push(...items);
 
-    setList(list);
+    setList(list); // Mutate variable and return appropriate value down the pipe
     return isTrueBoolean(args.jsReturn)
         ? listLength
         : JSON.stringify(list);
 }
 
 /**
- * Handles the /list-pop slash command to remove and return items from a list.
+ * Handles the /list-unshift slash command to add items to the beginning of a list.
  *
- * @param {Object} args - Command arguments including flags like swapReturn
- * @param {string} target - The list identifier (variable name or JSON string)
- * @param {boolean} [isShift=false] - If true, removes from beginning (shift), otherwise from end (pop)
- * @returns {*} - Either the popped item or remaining list (based on swapReturn flag)
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @param items - Items to unshift.
+ * @returns {number|Array} - Updated list or list length.
  */
-async function listPopShiftCMD(args, target, isShift = false) {
-    // Use varType to determine which variable type gets targeted.
-    const { list, setList } = getStorageType(target, args);
-
-    const swap = isTrueBoolean(args.swapReturn);
-    const popped = isShift
-        ? list.shift()
-        : list.pop();
-
-    setList(swap ? popped : list);
-    return swap
-        ? JSON.stringify(list)
-        : popped;
-}
-
-/**
- * Handles the /list-splice slash command to replace/remove items from a list.
- *
- * @param {Object} args - Command arguments including flags like noParse, jsReturn, swapReturn
- * @param {Array} [target, ...items] - Target list, items to insert
- * @returns {*} - Deleted items or remaining list based on flags
- */
-async function listSpliceCMD(args, [target, ...items]) {
+export async function listUnshiftCMD(args, [target, ...items]) {
     // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
     items = !isTrueBoolean(args.noParse)
         ? items.map(item => parseValue(item))
         : items;
 
-    // Use varType to determine which variable type gets targeted.
-    const { list, setList } = getStorageType(target, args);
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
+
+    const listLength = list.unshift(...items);
+
+    setList(list); // Mutate variable and return appropriate value down the pipe
+    return isTrueBoolean(args.jsReturn)
+        ? listLength
+        : JSON.stringify(list);
+}
+
+/**
+ * Handles the /list-pop slash command to remove an item from the end of a list.
+ *
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @returns {*|Array} - Popped item or updated list.
+ */
+export async function listPopCMD(args, target) {
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
+
+    const swap = isTrueBoolean(args.swapReturn);
+    const popped = list.pop();
+
+    setList(swap ? popped : list); // Mutate variable and return appropriate value down the pipe
+    return isTrueBoolean(args.jsReturn)
+        ? popped
+        : JSON.stringify(list);
+}
+
+/**
+ * Handles the /list-shift slash command to remove an item from the beginning of a list.
+ *
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @returns {*|Array} - Shifted item or updated list.
+ */
+export async function listShiftCMD(args, target) {
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
+
+    const swap = isTrueBoolean(args.swapReturn);
+    const shifted = list.shift();
+
+    setList(swap ? shifted : list); // Mutate variable and return appropriate value down the pipe
+    return isTrueBoolean(args.jsReturn)
+        ? shifted
+        : JSON.stringify(list);
+}
+
+/**
+ * Handles the /list-splice slash command to remove/replace items from a list.
+ *
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @param items - Items to add to the list.
+ * @returns {*|Array} - Spliced items or updated list.
+ */
+export async function listSpliceCMD(args, [target, ...items]) {
+    // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
+    items = !isTrueBoolean(args.noParse)
+        ? items.map(item => parseValue(item))
+        : items;
+
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
 
     const jsReturn = isTrueBoolean(args.jsReturn);
     const swapReturn = isTrueBoolean(args.swapReturn);
 
     const del_list = list.splice(args.start, args.del, ...items);
 
-    setList(swapReturn? del_list : list);
+    setList(swapReturn? del_list : list); // Mutate variable and return appropriate value down the pipe
     return swapReturn || !jsReturn
         ? JSON.stringify(list)
         : JSON.stringify(del_list);
 }
 
 /**
- * Handles the /list-sort and /list-reverse slash command to sort or reverse a list.
+ * Handles the /list-sort slash command to sort a list.
  *
- * @param {Object} args - Command arguments including flags like swapReturn
- * @param {string} target - The list identifier (variable name or JSON string)
- * @param {boolean} [isReverse=false] - Reverse the list instead of sorting if true
- * @returns {*} - The new sorted or reversed list
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @returns {Array} - Sorted list.
  */
-async function listSortReverseCMD(args, target, isReverse = false) {
-    // Use varType to determine which variable type gets targeted.
-    const { list, setList } = getStorageType(target, args);
+export async function listSortCMD(args, target) {
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
 
-
-    if (!isReverse) {
-        list.sort();
-    }
-    if (isTrueBoolean(args.reverse) || isReverse) {
+    list.sort();
+    if (isTrueBoolean(args.reverse)) {
         list.reverse();
     }
 
-    setList(list);
+    setList(list); // Mutate variable and return it down the pipe
+    return JSON.stringify(list);
+}
+
+/**
+ * Handles the /list-reverse slash command to reverse a list.
+ *
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @returns {Array} - Reversed list.
+ */
+export async function listReverseCMD(args, target) {
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
+
+    list.reverse();
+
+    setList(list); // Mutate variable and return it down the pipe
     return JSON.stringify(list);
 }
 
 /**
  * Handles the /list-fill slash command to fill a list with a single value.
  *
- * @param {Object} args - Command arguments including flags
- * @param {Array} [target, item] - Target list and value to fill with
- * @returns {*} - The new filled list
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @param item - Item to fill the list with.
+ * @returns {*} - Filled list.
  */
-async function listFillCMD(args, [target, item]) {
+export async function listFillCMD(args, [target, item]) {
     // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
     item = !isTrueBoolean(args.noParse)
         ? parseValue(item)
         : item;
 
-    // Determine storage scope and get list
-    const { list, setList } = getStorageType(target, args);
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
 
     list.fill(item, args.start ? args.start : undefined, args.end ? args.end : undefined);
 
-    setList(list);
+    setList(list); // Mutate variable and return it down the pipe
     return JSON.stringify(list);
 }
 
 /**
- * Handles the /list-copywithin slash command to copy elements within a list.
+ * Handles the /list-copywithin slash command to copy a portion of a list to another location within the list.
  *
- * @param {Object} args - Command arguments including flags
- * @param {Array} target - Target list
- * @returns {*} - The new list with copied elements
+ * @param {Object} args - Slash command arguments.
+ * @param target - Target list / variable.
+ * @returns {Array} - List with copied values.
  */
-async function listCopyWithinCMD(args, target) {
-    // Determine storage scope and get list
-    const { list, setList } = getStorageType(target, args);
+export async function listCopyWithinCMD(args, target) {
+    // Determine if variable and which type of variable to target
+    const { list, setList } = isMutableVarCheck(target, args);
 
     list.copyWithin(args.target, args.start, args.end ? args.end : undefined);
 
-    setList(list);
+    setList(list); // Mutate variable and return it down the pipe
     return JSON.stringify(list);
 }
-
-
-
-export const list_callbacks = {
-    list_push_unshift: listPushUnshiftCMD,
-    list_pop_shift: listPopShiftCMD,
-    list_splice: listSpliceCMD,
-    list_sort_reverse: listSortReverseCMD,
-    list_fill: listFillCMD,
-    list_copywithin: listCopyWithinCMD,
-};

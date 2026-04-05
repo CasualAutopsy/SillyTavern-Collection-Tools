@@ -18,7 +18,7 @@ const var_type = arg_types.VARIABLE_NAME;
 
 // PUSH / POP
 
-const LIST_PUSH_CONFIG = {
+export const LIST_PUSH_CONFIG = {
     name: 'list-push',
     aliases: ['arr-push', 'nox-list-push'],
     returns: 'The list with the pushed value(s) || The new list\'s length',
@@ -57,7 +57,7 @@ const LIST_PUSH_CONFIG = {
     splitUnnamedArgument: true,
 };
 
-const LIST_POP_CONFIG = {
+export const LIST_POP_CONFIG = {
     name: 'list-pop',
     aliases: ['arr-pop', 'nox-list-pop'],
     returns: 'The popped value from the list || The list without the popped value',
@@ -80,7 +80,7 @@ const LIST_POP_CONFIG = {
 
 // SHIFT / UNSHIFT
 
-const LIST_UNSHIFT_CONFIG = {
+export const LIST_UNSHIFT_CONFIG = {
     name: 'list-unshift',
     aliases: ['arr-unshift', 'nox-list-unshift'],
     returns: 'The list with the unshifted value(s) || The new list\'s length',
@@ -119,7 +119,7 @@ const LIST_UNSHIFT_CONFIG = {
     splitUnnamedArgument: true,
 };
 
-const LIST_SHIFT_CONFIG = {
+export const LIST_SHIFT_CONFIG = {
     name: 'list-shift',
     aliases: ['arr-shift', 'nox-list-shift'],
     returns: 'The shifted value from the list || The list without the shifted value',
@@ -142,7 +142,7 @@ const LIST_SHIFT_CONFIG = {
 
 // SPLICE
 
-const LIST_SPLICE_CONFIG = {
+export const LIST_SPLICE_CONFIG = {
     name: 'list-splice',
     aliases: ['arr-splice', 'nox-list-splice'],
     returns: 'The spliced list || The deleted elements',
@@ -199,7 +199,7 @@ const LIST_SPLICE_CONFIG = {
 
 // SORT / REVERSE
 
-const LIST_SORT_CONFIG = {
+export const LIST_SORT_CONFIG = {
     name: 'list-sort',
     aliases: ['arr-sort', 'nox-list-sort'],
     returns: 'The sorted list',
@@ -219,7 +219,7 @@ const LIST_SORT_CONFIG = {
     ],
 };
 
-const LIST_REVERSE_CONFIG = {
+export const LIST_REVERSE_CONFIG = {
     name: 'list-reverse',
     aliases: ['arr-reverse', 'nox-list-reverse'],
     returns: 'The reversed list',
@@ -234,7 +234,7 @@ const LIST_REVERSE_CONFIG = {
 
 // FILL / COPYWITHIN
 
-const LIST_FILL_CONFIG = {
+export const LIST_FILL_CONFIG = {
     name: 'list-fill',
     aliases: ['arr-fill', 'nox-list-fill'],
     returns: 'The filled list',
@@ -277,7 +277,7 @@ const LIST_FILL_CONFIG = {
     splitUnnamedArgumentCount: 2,
 };
 
-const LIST_COPYWITHIN_CONFIG = {
+export const LIST_COPYWITHIN_CONFIG = {
     name: 'list-copywithin',
     aliases: ['arr-copywithin', 'nox-list-copywithin'],
     returns: 'The list with the copied elements',
@@ -311,16 +311,4 @@ const LIST_COPYWITHIN_CONFIG = {
             isRequired: true,
         }),
     ],
-};
-
-export const list_configs = {
-    list_push: LIST_PUSH_CONFIG,
-    list_pop: LIST_POP_CONFIG,
-    list_unshift: LIST_UNSHIFT_CONFIG,
-    list_shift: LIST_SHIFT_CONFIG,
-    list_splice: LIST_SPLICE_CONFIG,
-    list_sort: LIST_SORT_CONFIG,
-    list_reverse: LIST_REVERSE_CONFIG,
-    list_fill: LIST_FILL_CONFIG,
-    list_copywithin: LIST_COPYWITHIN_CONFIG
 };
