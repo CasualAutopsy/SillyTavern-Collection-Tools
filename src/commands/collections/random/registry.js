@@ -1,17 +1,23 @@
 import {
-    collectionSampleCMD, collectionSampleSizeCMD, collectionShuffleCMD
+    collectionSampleCMD,
+    collectionSampleSizeCMD,
+    collectionShuffleCMD
 } from './lib.js';
 
 import {
-    COLLECTION_SAMPLE_CONFIG, COLLECTION_SAMPLE_SIZE_CONFIG, COLLECTION_SHUFFLE_CONFIG
+    COLLECTION_SAMPLE_CONFIG,
+    COLLECTION_SAMPLE_SIZE_CONFIG,
+    COLLECTION_SHUFFLE_CONFIG
 } from './configs.js';
 
 import {
-    COLLECTION_SAMPLE_HELP, COLLECTION_SAMPLE_SIZE_HELP, COLLECTION_SHUFFLE_HELP
+    COLLECTION_SAMPLE_HELP,
+    COLLECTION_SAMPLE_SIZE_HELP,
+    COLLECTION_SHUFFLE_HELP
 } from './docs.js';
 
 /**
- * Register all randomization slash commands.
+ * Register all collection randomization slash commands.
  */
 export async function registerRandomCollectionSlashCommands() {
     const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext()

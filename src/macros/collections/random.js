@@ -1,16 +1,18 @@
 import {sample, sampleSize, shuffle} from 'lodash-es';
 import {parseInt} from 'lodash-es';
 
-import {macroIsVarCheck} from '../../../utils.js';
-
-const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
-
-const macros = context.macros;
+const {macroParseVar}
+    = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/macro-parsing.js')
+    , {parseJSON}
+    = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
 
 
 
 export async function registerRandomCollectionMacros() {
-    macros.registry.registerMacro(
+    const {registerMacro}
+        = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext().macros.registry;
+
+    registerMacro(
         'sampleCollection',
         {
             category: 'Collection Utilities',
@@ -30,10 +32,10 @@ export async function registerRandomCollectionMacros() {
             returns: 'The sampled element.',
             handler: ({unnamedArgs: [nRaw, targetRaw], resolve}) => {
                 let n = parseInt(nRaw);
-                let [target, _] = macroIsVarCheck(targetRaw, resolve);
+                let [target, _] = macroParseVar(targetRaw, resolve);
 
                 try {
-                    target = JSON.parse(target);
+                    target = parseJSON(target);
                 } catch {
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -47,7 +49,7 @@ export async function registerRandomCollectionMacros() {
     );
 
 
-    macros.registry.registerMacro(
+    registerMacro(
         'shuffleCollection',
         {
             category: 'Collection Utilities',
@@ -61,10 +63,10 @@ export async function registerRandomCollectionMacros() {
             description: 'Shuffles a given collection.',
             returns: 'The shuffled collection.',
             handler: ({unnamedArgs: [targetRaw], resolve}) => {
-                let [target, _] = macroIsVarCheck(targetRaw, resolve);
+                let [target, _] = macroParseVar(targetRaw, resolve);
 
                 try {
-                    target = JSON.parse(target);
+                    target = parseJSON(target);
                 } catch {
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';

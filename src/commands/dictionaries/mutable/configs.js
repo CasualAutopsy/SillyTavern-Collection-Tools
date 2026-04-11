@@ -1,11 +1,11 @@
-const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
+const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext()
 
-const slash_arg = context.SlashCommandArgument;
+    , slash_arg = context.SlashCommandArgument;
 
-const arg_types = context.ARGUMENT_TYPE;
+const arg_types = context.ARGUMENT_TYPE
 
-const string_type = arg_types.STRING;
-const dict_type = arg_types.DICTIONARY;
+    , string_type = arg_types.STRING
+    , dict_type = arg_types.DICTIONARY;
 
 export const DICT_ASSIGN_CONFIG = {
     name: 'dict-assign',

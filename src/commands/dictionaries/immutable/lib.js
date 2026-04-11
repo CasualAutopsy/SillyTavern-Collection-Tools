@@ -1,5 +1,10 @@
 import {at, get} from 'lodash-es';
-import {parseValue, isVarCheck, parseOrVar} from '../../../../utils.js';
+
+const {
+    parseValue,
+    parseValueOrVar,
+    parseJSONOrVar
+} = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
 
 
 /**
@@ -13,7 +18,7 @@ import {parseValue, isVarCheck, parseOrVar} from '../../../../utils.js';
 export async function dictAtCMD(args, [target, ...paths]) {
     return JSON.stringify(
         at(
-            isVarCheck(target, args),
+            parseJSONOrVar(target, args),
             parseValue(paths)
         )
     );
@@ -29,10 +34,10 @@ export async function dictAtCMD(args, [target, ...paths]) {
  */
 export async function dictGetCMD(args, [target, path]) {
     const retrieval = get(
-        isVarCheck(target, args),
+        parseJSONOrVar(target, args),
         parseValue(path),
         args.default
-            ? parseOrVar(args.default, args)
+            ? parseValueOrVar(args.default, args)
             : undefined
     );
 

@@ -1,13 +1,15 @@
 const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext()
 
-    , slash_arg = context.SlashCommandArgument
+    , slash_arg = context.SlashCommandArgument;
 
-    , arg_types = context.ARGUMENT_TYPE
+const arg_types = context.ARGUMENT_TYPE
 
     , number_type = arg_types.NUMBER
     , list_type = arg_types.LIST
     , dict_type = arg_types.DICTIONARY
     , var_type = arg_types.VARIABLE_NAME;
+
+
 
 
 /**
@@ -25,6 +27,7 @@ export const COLLECTION_SAMPLE_CONFIG = {
         }),
     ],
 };
+
 
 /**
  * Collection - Sample size method config

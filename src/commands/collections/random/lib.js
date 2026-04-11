@@ -1,7 +1,9 @@
 import {sample, sampleSize, shuffle} from 'lodash-es';
-import {toSafeInteger} from 'lodash-es';
+import {parseInt} from 'lodash-es';
 
-import {isVarCheck} from '../../../../utils.js';
+const {
+    parseJSONOrVar
+} = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
 
 /**
  * Handles the '/collection-sample' command for sampling a random value from a collection.
@@ -11,9 +13,9 @@ import {isVarCheck} from '../../../../utils.js';
  * @returns {*} - Sampled value.
  */
 export async function collectionSampleCMD(args, target) {
-    return sample(
-        isVarCheck(target, args)
-    );
+    return JSON.stringify(sample(
+        parseJSONOrVar(target, args)
+    ));
 }
 
 /**
@@ -26,8 +28,8 @@ export async function collectionSampleCMD(args, target) {
  */
 export async function collectionSampleSizeCMD(args, [target, n]) {
     return JSON.stringify(sampleSize(
-        isVarCheck(target, args),
-        toSafeInteger(n)
+        parseJSONOrVar(target, args),
+        parseInt(n)
     ));
 }
 
@@ -40,6 +42,6 @@ export async function collectionSampleSizeCMD(args, [target, n]) {
  */
 export async function collectionShuffleCMD(args, target) {
     return JSON.stringify(shuffle(
-        isVarCheck(target, args)
+        parseJSONOrVar(target, args)
     ));
 }

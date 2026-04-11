@@ -1,17 +1,20 @@
-import {macroIsVarCheck, macroMutate, parseValue} from '../../../utils.js';
 import {parseInt} from "lodash-es";
 
-const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext();
-
-const macros = context.macros;
+const {parseValue, parseJSON}
+    = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js')
+    , {macroParseVar, macroMutateVar}
+    = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/macro-parsing.js');
 
 
 
 export async function registerMutableListMacros() {
+    const {registerMacro}
+        = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext().macros.registry;
+
     // PUSH / POP
 
     // Register 'pushList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'pushList',
         {
             category: 'List Utilities',
@@ -27,13 +30,13 @@ export async function registerMutableListMacros() {
             returns: 'The updated list.',
             handler: ({unnamedArgs: [targetRaw], list: [...valuesRaw], resolve}) => {
                 // Parse raw strings into appropriate types.
-                const values = valuesRaw.map(item => parseValue(item));
+                const values = valuesRaw.map(item => parseValue(macroParseVar(item, resolve)[0]));
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -42,7 +45,7 @@ export async function registerMutableListMacros() {
                 list.push(...values);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -52,7 +55,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'popList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'popList',
         {
             category: 'List Utilities',
@@ -67,11 +70,11 @@ export async function registerMutableListMacros() {
             returns: 'The popped value.',
             handler: ({unnamedArgs: [targetRaw], resolve}) => {
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -80,7 +83,7 @@ export async function registerMutableListMacros() {
                 const popped = list.pop();
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the popped value as a string.
@@ -94,7 +97,7 @@ export async function registerMutableListMacros() {
     // SHIFT / UNSHIFT
 
     // Register 'unshiftList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'unshiftList',
         {
             category: 'List Utilities',
@@ -110,13 +113,13 @@ export async function registerMutableListMacros() {
             returns: 'The updated list.',
             handler: ({unnamedArgs: [targetRaw], list: [...valuesRaw], resolve}) => {
                 // Parse raw strings into appropriate types.
-                const values = valuesRaw.map(item => parseValue(item));
+                const values = valuesRaw.map(item => parseValue(macroParseVar(item, resolve)[0]));
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -125,7 +128,7 @@ export async function registerMutableListMacros() {
                 list.unshift(...values);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -135,7 +138,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'shiftList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'shiftList',
         {
             category: 'List Utilities',
@@ -150,11 +153,11 @@ export async function registerMutableListMacros() {
             returns: 'The shifted value.',
             handler: ({unnamedArgs: [targetRaw], resolve}) => {
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -163,7 +166,7 @@ export async function registerMutableListMacros() {
                 const shifted = list.shift();
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the shifted value as a string.
@@ -177,7 +180,7 @@ export async function registerMutableListMacros() {
     // SPLICE
 
     // Register 'spliceList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'spliceList',
         {
             category: 'List Utilities',
@@ -206,13 +209,13 @@ export async function registerMutableListMacros() {
                 const startVal = parseInt(startRaw)
                     , deleteVal = parseInt(deleteRaw);
                 // Parse raw strings into appropriate types.
-                const values = valuesRaw.map(item => parseValue(item));
+                const values = valuesRaw.map(item => parseValue(macroParseVar(item, resolve)[0]));
                 // Check if target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.-
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -221,7 +224,7 @@ export async function registerMutableListMacros() {
                 list.splice(startVal, deleteVal, ...values);
 
                 if (shorthand) { // if the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -233,7 +236,7 @@ export async function registerMutableListMacros() {
     // SORT / REVERSE
 
     // Register 'sortList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'sortList',
         {
             category: 'List Utilities',
@@ -248,11 +251,11 @@ export async function registerMutableListMacros() {
             returns: 'The sorted list.',
             handler: ({unnamedArgs: [targetRaw], resolve}) => {
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -261,7 +264,7 @@ export async function registerMutableListMacros() {
                 list.sort();
 
                 if (shorthand) { // if the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -271,7 +274,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'reverseList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'reverseList',
         {
             category: 'List Utilities',
@@ -286,11 +289,11 @@ export async function registerMutableListMacros() {
             returns: 'The reversed list.',
             handler: ({unnamedArgs: [targetRaw], resolve}) => {
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -299,7 +302,7 @@ export async function registerMutableListMacros() {
                 list.reverse();
 
                 if (shorthand) { // if the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -311,7 +314,7 @@ export async function registerMutableListMacros() {
     // FILL / COPYWITHIN
 
     // Register 'fillList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'fillList',
         {
             category: 'List Utilities',
@@ -331,13 +334,13 @@ export async function registerMutableListMacros() {
             returns: 'The filled list.',
             handler: ({unnamedArgs: [targetRaw, valueRaw], resolve}) => {
                 // Parse the value into the appropriate type.
-                const value = parseValue(valueRaw);
+                const value = parseValue(macroParseVar(valueRaw, resolve)[0]);
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -346,7 +349,7 @@ export async function registerMutableListMacros() {
                 list.fill(value);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -356,7 +359,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'fillListRange' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'fillListRange',
         {
             category: 'List Utilities',
@@ -389,13 +392,13 @@ export async function registerMutableListMacros() {
                 const start = parseInt(startRaw)
                     , end = parseInt(endRaw);
                 // Parse the value into the appropriate type.
-                const value = parseValue(valueRaw);
+                const value = parseValue(macroParseVar(valueRaw, resolve)[0]);
                 // Check if the target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error, and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -404,7 +407,7 @@ export async function registerMutableListMacros() {
                 list.fill(value, start, end);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -414,7 +417,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'copyWithinList' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'copyWithinList',
         {
             category: 'List Utilities',
@@ -436,11 +439,11 @@ export async function registerMutableListMacros() {
                 // Parse copyStart as an integer.
                 const copyStart = parseInt(copyStartRaw);
                 // Check if target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse the target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -449,7 +452,7 @@ export async function registerMutableListMacros() {
                 list.copyWithin(target, copyStart);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
@@ -459,7 +462,7 @@ export async function registerMutableListMacros() {
     );
 
     // Register 'copyWithinListRange' macro.
-    macros.registry.registerMacro(
+    registerMacro(
         'copyWithinListRange',
         {
             category: 'List Utilities',
@@ -487,11 +490,11 @@ export async function registerMutableListMacros() {
                 const copyStart = parseInt(copyStartRaw)
                     , copyEnd = parseInt(copyEndRaw);
                 // Check if target is a variable.
-                const [target, shorthand] = macroIsVarCheck(targetRaw, resolve);
+                const [target, shorthand] = macroParseVar(targetRaw, resolve);
 
                 let list;
                 try { // Try to parse target as JSON.
-                    list = JSON.parse(target);
+                    list = parseJSON(target);
                 } catch { // If it fails, log an error and return an empty string.
                     console.error('[Collection Tools]Invalid JSON: ' + target);
                     return '';
@@ -500,7 +503,7 @@ export async function registerMutableListMacros() {
                 list.copyWithin(target, copyStart, copyEnd);
 
                 if (shorthand) { // If the target is a variable, update it with the new list.
-                    macroMutate(list, resolve, shorthand);
+                    macroMutateVar(list, resolve, shorthand);
                 }
 
                 // Return the updated list as a string.
