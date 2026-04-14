@@ -1,11 +1,12 @@
 {
     "display_name": "List Tools",
-    "loading_order": 1,
+    "loading_order": 2,
     "requires": [],
     "optional": [],
-    "js": "index.js",
+    "dependencies": ["third-party/STLibs-Nox-Library"],
+    "js": "dist/index.js",
     "author": "CasualAutopsy",
-    "version": "0.1.0",
+    "version": "a0.1.0",
     "homePage": "https://github.com/CasualAutopsy/SillyTavern-List-Tools",
     "auto_update": false
 }
