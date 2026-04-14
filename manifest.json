@@ -1,5 +1,5 @@
 {
-    "display_name": "List Tools",
+    "display_name": "Collection Tools",
     "loading_order": 2,
     "requires": [],
     "optional": [],
@@ -7,6 +7,6 @@
     "js": "dist/index.js",
     "author": "CasualAutopsy",
     "version": "a0.1.0",
-    "homePage": "https://github.com/CasualAutopsy/SillyTavern-List-Tools",
+    "homePage": "https://github.com/CasualAutopsy/SillyTavern-Collection-Tools",
     "auto_update": false
 }
