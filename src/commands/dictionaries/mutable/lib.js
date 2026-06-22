@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {assign} from 'lodash-es';
 
 const {

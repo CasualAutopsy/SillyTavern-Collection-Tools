@@ -1,3 +1,4 @@
+// @ts-nocheck
 const {isTrueBoolean}
     = await import(/* webpackIgnore: true */ '/scripts/utils.js');
 
@@ -15,21 +16,18 @@ const {
  * @returns {Promise<String|Number>} - Updated list or list length.
  */
 export async function listPushCMD(args, [target, ...items]) {
-    // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
-    // @ts-ignore
     items = !isTrueBoolean(args.noParse)
         ? items.map((item) => {
             return parseValueOrVar(item, args);
         })
         : items;
 
-    // Determine if variable and which type of variable to target
-    const { list, setList } = mutableParseValueOrVar(target, args)
-    // @ts-ignore
-        , listLength = list.push(...items)
+    const
+        { list, setList } = mutableParseValueOrVar(target, args),
+        listLength = list.push(...items);
 
-    setList(list); // Mutate variable and return appropriate value down the pipe
-    // @ts-ignore
+    setList(list);
+
     return isTrueBoolean(args.jsReturn)
         ? listLength
         : JSON.stringify(list);
@@ -43,21 +41,18 @@ export async function listPushCMD(args, [target, ...items]) {
  * @returns {Promise<String|Number>} - Updated list or list length.
  */
 export async function listUnshiftCMD(args, [target, ...items]) {
-    // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
-    // @ts-ignore
     items = !isTrueBoolean(args.noParse)
         ? items.map((item) => {
             return parseValueOrVar(item, args);
         })
         : items;
 
-    // Determine if variable and which type of variable to target
-    const { list, setList } = mutableParseValueOrVar(target, args)
-    // @ts-ignore
-        , listLength = list.unshift(...items);
+    const
+        { list, setList } = mutableParseValueOrVar(target, args),
+        listLength = list.unshift(...items);
 
-    setList(list); // Mutate variable and return appropriate value down the pipe
-    // @ts-ignore
+    setList(list);
+
     return isTrueBoolean(args.jsReturn)
         ? listLength
         : JSON.stringify(list);
@@ -71,16 +66,14 @@ export async function listUnshiftCMD(args, [target, ...items]) {
  * @returns {Promise<String|*>} - Popped item or updated list.
  */
 export async function listPopCMD(args, target) {
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
-    const swap = isTrueBoolean(args.swapReturn)
-    // @ts-ignore
-        , popped = list.pop();
+    const
+        swap = isTrueBoolean(args.swapReturn),
+        popped = list.pop();
 
-    setList(swap ? popped : list); // Mutate variable and return appropriate value down the pipe
-    // @ts-ignore
+    setList(swap ? popped : list);
+
     return isTrueBoolean(args.jsReturn)
         ? popped
         : JSON.stringify(list);
@@ -94,16 +87,14 @@ export async function listPopCMD(args, target) {
  * @returns {Promise<String|*>} - Shifted item or updated list.
  */
 export async function listShiftCMD(args, target) {
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
-    const swap = isTrueBoolean(args.swapReturn)
-    // @ts-ignore
-        , shifted = list.shift();
+    const
+        swap = isTrueBoolean(args.swapReturn),
+        shifted = list.shift();
 
-    setList(swap ? shifted : list); // Mutate variable and return appropriate value down the pipe
-    // @ts-ignore
+    setList(swap ? shifted : list);
+
     return isTrueBoolean(args.jsReturn)
         ? shifted
         : JSON.stringify(list);
@@ -117,26 +108,21 @@ export async function listShiftCMD(args, target) {
  * @returns {Promise<String>} - Spliced items or updated list.
  */
 export async function listSpliceCMD(args, [target, ...items]) {
-    // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
-    // @ts-ignore
     items = !isTrueBoolean(args.noParse)
         ? items.map((item) => {
             return parseValueOrVar(item, args);
         })
         : items;
 
-    // Determine if variable and which type of variable to target
-    const { list, setList } = mutableParseValueOrVar(target, args);
+    const
+        { list, setList } = mutableParseValueOrVar(target, args),
 
-    // @ts-ignore
-    const jsReturn = isTrueBoolean(args.jsReturn)
-    // @ts-ignore
-        , swapReturn = isTrueBoolean(args.swapReturn)
+        jsReturn = isTrueBoolean(args.jsReturn),
+        swapReturn = isTrueBoolean(args.swapReturn),
+        del_list = list.splice(args.start, args.del, ...items);
 
-    // @ts-ignore
-        , del_list = list.splice(args.start, args.del, ...items);
+    setList(swapReturn? del_list : list);
 
-    setList(swapReturn? del_list : list); // Mutate variable and return appropriate value down the pipe
     return swapReturn || !jsReturn
         ? JSON.stringify(list)
         : JSON.stringify(del_list);
@@ -150,18 +136,16 @@ export async function listSpliceCMD(args, [target, ...items]) {
  * @returns {Promise<String>} - Sorted list.
  */
 export async function listSortCMD(args, target) {
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
     list.sort();
-    // @ts-ignore
+
     if (isTrueBoolean(args.reverse)) {
-        // @ts-ignore
         list.reverse();
     }
 
-    setList(list); // Mutate variable and return it down the pipe
+    setList(list);
+
     return JSON.stringify(list);
 }
 
@@ -173,13 +157,12 @@ export async function listSortCMD(args, target) {
  * @returns {Promise<String>} - Reversed list.
  */
 export async function listReverseCMD(args, target) {
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
     list.reverse();
 
-    setList(list); // Mutate variable and return it down the pipe
+    setList(list);
+
     return JSON.stringify(list);
 }
 
@@ -191,19 +174,16 @@ export async function listReverseCMD(args, target) {
  * @returns {Promise<String>} - Filled list.
  */
 export async function listFillCMD(args, [target, item]) {
-    // Keep SillyTavern values 'as-is' if noParse flag is set, otherwise parse values
-    // @ts-ignore
     item = !isTrueBoolean(args.noParse)
         ? parseValueOrVar(item, args)
         : item;
 
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
     list.fill(item, args.start ? args.start : undefined, args.end ? args.end : undefined);
 
-    setList(list); // Mutate variable and return it down the pipe
+    setList(list);
+
     return JSON.stringify(list);
 }
 
@@ -215,12 +195,11 @@ export async function listFillCMD(args, [target, item]) {
  * @returns {Promise<String>} - List with copied values.
  */
 export async function listCopyWithinCMD(args, target) {
-    // Determine if variable and which type of variable to target
     const { list, setList } = mutableParseValueOrVar(target, args);
 
-    // @ts-ignore
     list.copyWithin(args.target, args.start, args.end ? args.end : undefined);
 
-    setList(list); // Mutate variable and return it down the pipe
+    setList(list);
+
     return JSON.stringify(list);
 }

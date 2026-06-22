@@ -1,3 +1,5 @@
+// @ts-nocheck
+const {noxEnumProvider} = await import(/* webpackIgnore: true */'/scripts/extensions/third-party/STLibs-Nox-Library/scripts/enum-provider.js');
 const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext()
 
     , slash_named_arg = context.SlashCommandNamedArgument
@@ -21,6 +23,7 @@ export const LIST_ZIP_CONFIG = {
                 var_type,
             ],
             isRequired: true,
+            enumProvider: noxEnumProvider.shorthand('shorthand-w-scope'),
         }),
         slash_arg.fromProps({
             description: 'The source lists to zip',
@@ -30,9 +33,11 @@ export const LIST_ZIP_CONFIG = {
             ],
             isRequired: true,
             acceptsMultiple: true,
+            enumProvider: noxEnumProvider.shorthand('shorthand-w-scope'),
         }),
     ],
     splitUnnamedArgument: true,
+
 };
 
 export const LIST_ZIP_OBJECT_CONFIG = {
@@ -55,6 +60,7 @@ export const LIST_ZIP_OBJECT_CONFIG = {
                 var_type
             ],
             isRequired: true,
+            enumProvider: noxEnumProvider.shorthand('shorthand-w-scope'),
         }),
         slash_arg.fromProps({
             description: 'The value list to zip',
@@ -63,6 +69,7 @@ export const LIST_ZIP_OBJECT_CONFIG = {
                 var_type
             ],
             isRequired: true,
+            enumProvider: noxEnumProvider.shorthand('shorthand-w-scope'),
         }),
     ],
     splitUnnamedArgument: true,

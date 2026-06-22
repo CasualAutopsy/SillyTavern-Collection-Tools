@@ -6,8 +6,8 @@ import {registerImmutableDictSlashCommands} from './commands/dictionaries/immuta
 import {registerMutableSlashCommands} from './commands/lists/mutable/registry.js';
 import {registerZipSlashCommands} from './commands/lists/zip/registry.js';
 
-import {registerRandomCollectionMacros} from './macros/collections/random.js';
-import {registerMutableListMacros} from './macros/lists/mutable.js';
+// import {registerRandomCollectionMacros} from './macros/collections/random.js';
+// import {registerMutableListMacros} from './macros/lists/mutable.js';
 
 
 
@@ -17,6 +17,6 @@ Promise.all([
     registerMutableSlashCommands(),
     registerZipSlashCommands(),
     registerRandomCollectionSlashCommands(),
-    registerMutableListMacros(),
-    registerRandomCollectionMacros()
+    // registerMutableListMacros(),
+    // registerRandomCollectionMacros()
 ]);

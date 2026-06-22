@@ -1,8 +1,8 @@
-import {
-    zip,
-    zipObject,
-    zipObjectDeep
-} from 'lodash-es';
+// @ts-nocheck
+/* eslint-disable no-undef */
+const {
+    zip, zipObject, zipObjectDeep
+} = SillyTavern.libs.lodash
 
 const {
     parseJSONOrVar
@@ -17,9 +17,7 @@ const {
  * @returns {Promise<String>} - JSON string of zipped tuples.
  */
 export async function listZipCMD(args, sources) {
-    /** @type {*[][]} */// @ts-ignore
-    const mapped // Map sorces to an array of arrays
-        = sources.map(src => parseJSONOrVar(src, args));
+    const mapped = sources.map(src => parseJSONOrVar(src, args));
 
     return JSON.stringify(zip(...mapped));
 }
@@ -32,13 +30,10 @@ export async function listZipCMD(args, sources) {
  * @returns {Promise<String>} - JSON string of zipped object.
  */
 export async function listZipObjectCMD(args, sources) {
-    /** @type {[Array<String>, Array<*>]} */// @ts-ignore
-    const [keys, values] // Map sorces to two arrays for keys and values
-        = [...sources.map(src => parseJSONOrVar(src, args))];
+    const [keys, values] = [...sources.map(src => parseJSONOrVar(src, args))];
 
     return JSON.stringify(
-        // @ts-ignore
-        args.deep // If deep flag is set, allow the use of property paths for the keys array
+        args.deep
             ? zipObjectDeep(keys, values)
             : zipObject(keys, values)
     );
