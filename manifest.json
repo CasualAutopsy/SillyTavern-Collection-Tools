@@ -4,9 +4,9 @@
     "requires": [],
     "optional": [],
     "dependencies": ["third-party/STLibs-Nox-Library"],
-    "js": "dist/index.js",
+    "js": "dist/main.bundled.js",
     "author": "CasualAutopsy",
-    "version": "a0.1.0",
+    "version": "0.1.0-alpha",
     "homePage": "https://github.com/CasualAutopsy/SillyTavern-Collection-Tools",
     "auto_update": false
 }
