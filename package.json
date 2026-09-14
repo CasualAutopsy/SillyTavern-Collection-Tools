@@ -1,6 +1,6 @@
 {
   "name": "sillytavern-collection-tools",
-  "version": "0.1.0-alpha",
+  "version": "1.0.0-alpha",
   "description": "Collection Tools is a library of SillyTavern macros and slash commands for operations related to lists and dictionaries.",
   "type": "module",
   "scripts": {
