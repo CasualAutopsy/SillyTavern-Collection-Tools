@@ -1,11 +1,14 @@
+/* eslint-disable no-undef */
 // @ts-nocheck
-const {isTrueBoolean}
-    = await import(/* webpackIgnore: true */ '/scripts/utils.js');
-
 const {
-    parseValueOrVar,
     mutableParseValueOrVar
 } = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
+
+const {
+    shorthandValueResolver,
+    shorthandStrictBoolResolver,
+    shorthandJSONResolver
+} = NoxLib.CoercionAndShorthand.VarShorthand;
 
 
 /**
@@ -16,9 +19,9 @@ const {
  * @returns {Promise<String|Number>} - Updated list or list length.
  */
 export async function listPushCMD(args, [target, ...items]) {
-    items = !isTrueBoolean(args.noParse)
+    items = !shorthandStrictBoolResolver(args.noParse)
         ? items.map((item) => {
-            return parseValueOrVar(item, args);
+            return shorthandValueResolver(item, args);
         })
         : items;
 
@@ -28,7 +31,7 @@ export async function listPushCMD(args, [target, ...items]) {
 
     setList(list);
 
-    return isTrueBoolean(args.jsReturn)
+    return shorthandStrictBoolResolver(args.jsReturn)
         ? listLength
         : JSON.stringify(list);
 }
@@ -41,9 +44,9 @@ export async function listPushCMD(args, [target, ...items]) {
  * @returns {Promise<String|Number>} - Updated list or list length.
  */
 export async function listUnshiftCMD(args, [target, ...items]) {
-    items = !isTrueBoolean(args.noParse)
+    items = !shorthandStrictBoolResolver(args.noParse)
         ? items.map((item) => {
-            return parseValueOrVar(item, args);
+            return shorthandValueResolver(item, args);
         })
         : items;
 
@@ -53,7 +56,7 @@ export async function listUnshiftCMD(args, [target, ...items]) {
 
     setList(list);
 
-    return isTrueBoolean(args.jsReturn)
+    return shorthandStrictBoolResolver(args.jsReturn)
         ? listLength
         : JSON.stringify(list);
 }
@@ -69,12 +72,12 @@ export async function listPopCMD(args, target) {
     const { list, setList } = mutableParseValueOrVar(target, args);
 
     const
-        swap = isTrueBoolean(args.swapReturn),
+        swap = shorthandStrictBoolResolver(args.swapReturn),
         popped = list.pop();
 
     setList(swap ? popped : list);
 
-    return isTrueBoolean(args.jsReturn)
+    return shorthandStrictBoolResolver(args.jsReturn)
         ? popped
         : JSON.stringify(list);
 }
@@ -90,12 +93,12 @@ export async function listShiftCMD(args, target) {
     const { list, setList } = mutableParseValueOrVar(target, args);
 
     const
-        swap = isTrueBoolean(args.swapReturn),
+        swap = shorthandStrictBoolResolver(args.swapReturn),
         shifted = list.shift();
 
     setList(swap ? shifted : list);
 
-    return isTrueBoolean(args.jsReturn)
+    return shorthandStrictBoolResolver(args.jsReturn)
         ? shifted
         : JSON.stringify(list);
 }
@@ -108,17 +111,17 @@ export async function listShiftCMD(args, target) {
  * @returns {Promise<String>} - Spliced items or updated list.
  */
 export async function listSpliceCMD(args, [target, ...items]) {
-    items = !isTrueBoolean(args.noParse)
+    items = !shorthandStrictBoolResolver(args.noParse)
         ? items.map((item) => {
-            return parseValueOrVar(item, args);
+            return shorthandValueResolver(item, args);
         })
         : items;
 
     const
         { list, setList } = mutableParseValueOrVar(target, args),
 
-        jsReturn = isTrueBoolean(args.jsReturn),
-        swapReturn = isTrueBoolean(args.swapReturn),
+        jsReturn = shorthandStrictBoolResolver(args.jsReturn),
+        swapReturn = shorthandStrictBoolResolver(args.swapReturn),
         del_list = list.splice(args.start, args.del, ...items);
 
     setList(swapReturn? del_list : list);
@@ -140,7 +143,7 @@ export async function listSortCMD(args, target) {
 
     list.sort();
 
-    if (isTrueBoolean(args.reverse)) {
+    if (shorthandStrictBoolResolver(args.reverse)) {
         list.reverse();
     }
 
@@ -174,8 +177,8 @@ export async function listReverseCMD(args, target) {
  * @returns {Promise<String>} - Filled list.
  */
 export async function listFillCMD(args, [target, item]) {
-    item = !isTrueBoolean(args.noParse)
-        ? parseValueOrVar(item, args)
+    item = !shorthandStrictBoolResolver(args.noParse)
+        ? shorthandValueResolver(item, args)
         : item;
 
     const { list, setList } = mutableParseValueOrVar(target, args);

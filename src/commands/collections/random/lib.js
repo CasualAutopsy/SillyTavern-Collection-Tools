@@ -1,19 +1,29 @@
-import {sample, sampleSize, shuffle} from 'lodash-es';
-import {parseInt} from 'lodash-es';
+/* eslint-disable no-undef */
+const {
+    sample, sampleSize,
+    shuffle
+} = SillyTavern.libs.lodash;
 
-const {parseJSONOrVar}
-    = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
+const {
+    shorthandIntResolver,
+    shorthandJSONResolver
+} = NoxLib.CoercionAndShorthand.VarShorthand
+
+/**
+ * @typedef {import('/scripts/slash-commands/SlashCommand').NamedArguments} NamedArguments
+ * @typedef {import('/scripts/slash-commands/SlashCommand').UnnamedArguments} UnnamedArguments
+ */
 
 /**
  * Handles the '/collection-sample' command for sampling a random value from a collection.
  *
- * @param {Object} args - Slash command arguments.
- * @param {String} target - Target collection / variable.
+ * @param {NamedArguments} args - Slash command arguments.
+ * @param {UnnamedArguments} val - Target collection / variable.
  * @returns {Promise<*>} - Sampled value.
- *///? Maybe combine with SampleSize?
-export async function collectionSampleCMD(args, target) {
+ */
+export async function collectionSampleCMD(args, val) {
     const sampledValue = sample(
-        parseJSONOrVar(target, args)
+        shorthandJSONResolver(val, args)
     );
 
     return typeof sampledValue == 'object'
@@ -24,7 +34,7 @@ export async function collectionSampleCMD(args, target) {
 /**
  * Handles the '/collection-sample-size' command for randomly sampling n number of values from a collection.
  *
- * @param {Object} args - Slash command arguments.
+ * @param {NamedArguments} args - Slash command arguments.
  * @param {[String, String]} unnamedArgs - Target collection / variable + number of values to sample.
  * @returns {Promise<String>} - Array of sampled values.
  */
@@ -32,21 +42,20 @@ export async function collectionSampleSizeCMD(args, [target, n]) {
     return JSON.stringify(
         // @ts-ignore
         sampleSize(
-            parseJSONOrVar(target, args),
-            // @ts-ignore
-            parseInt(n),
+            shorthandJSONResolver(target, args),
+            shorthandIntResolver(n, args),
     ));
 }
 
 /**
  * Handles the '/collection-shuffle' command for shuffling a collection.
  *
- * @param {Object} args - Slash command arguments.
- * @param {String} target - Target collection / variable.
+ * @param {NamedArguments} args - Slash command arguments.
+ * @param {UnnamedArguments} val - Target collection / variable.
  * @returns {Promise<String>} - Array of shuffled values.
  */
-export async function collectionShuffleCMD(args, target) {
+export async function collectionShuffleCMD(args, val) {
     return JSON.stringify(shuffle(
-        parseJSONOrVar(target, args)
+        shorthandJSONResolver(val, args)
     ));
 }

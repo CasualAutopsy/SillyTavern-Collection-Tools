@@ -1,13 +1,6 @@
-const context = (await import(/* webpackIgnore: true */ '/scripts/st-context.js')).getContext()
-
-    , slash_arg = context.SlashCommandArgument;
-
-const arg_types = context.ARGUMENT_TYPE
-
-    , number_type = arg_types.NUMBER
-    , list_type = arg_types.LIST
-    , dict_type = arg_types.DICTIONARY
-    , var_type = arg_types.VARIABLE_NAME;
+/* eslint-disable no-undef */
+// @ts-nocheck
+const { SlashCommandArgument, ARGUMENT_TYPE } = SillyTavern.getContext();
 
 
 
@@ -20,9 +13,13 @@ export const COLLECTION_SAMPLE_CONFIG = {
     aliases: ['nox-collection-sample'],
     returns: 'The randomly sampled value',
     unnamedArgumentList: [
-        slash_arg.fromProps({
+        SlashCommandArgument.fromProps({
             description: 'The target list / variable (. for local | $ for global | no prefix for scope)',
-            typeList: [list_type, dict_type, var_type],
+            typeList: [
+                ARGUMENT_TYPE.LIST,
+                ARGUMENT_TYPE.DICTIONARY,
+                ARGUMENT_TYPE.VARIABLE_NAME
+            ],
             isRequired: true,
         }),
     ],
@@ -37,14 +34,18 @@ export const COLLECTION_SAMPLE_SIZE_CONFIG = {
     aliases: ['nox-collection-sample-size'],
     returns: 'The randomly sampled values',
     unnamedArgumentList: [
-        slash_arg.fromProps({
+        SlashCommandArgument.fromProps({
             description: 'The target list / variable (. for local | $ for global | no prefix for scope)',
-            typeList: [list_type, dict_type, var_type],
+            typeList: [
+                ARGUMENT_TYPE.LIST,
+                ARGUMENT_TYPE.DICTIONARY,
+                ARGUMENT_TYPE.VARIABLE_NAME
+            ],
             isRequired: true,
         }),
-        slash_arg.fromProps({
+        SlashCommandArgument.fromProps({
             description: 'The sample size',
-            typeList: [number_type],
+            typeList: [ARGUMENT_TYPE.NUMBER],
             isRequired: true,
         }),
     ],
@@ -60,9 +61,13 @@ export const COLLECTION_SHUFFLE_CONFIG = {
     aliases: ['nox-collection-shuffle'],
     returns: 'The shuffled values',
     unnamedArgumentList: [
-        slash_arg.fromProps({
+        SlashCommandArgument.fromProps({
             description: 'The target list / variable (. for local | $ for global | no prefix for scope)',
-            typeList: [list_type, dict_type, var_type],
+            typeList: [
+                ARGUMENT_TYPE.LIST,
+                ARGUMENT_TYPE.DICTIONARY,
+                ARGUMENT_TYPE.VARIABLE_NAME
+            ],
             isRequired: true,
         }),
     ],

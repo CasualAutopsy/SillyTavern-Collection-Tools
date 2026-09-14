@@ -1,24 +1,27 @@
-import {at, get} from 'lodash-es';
+/* eslint-disable no-undef */
+const { at, get } = SillyTavern.libs.lodash;
 
-const {
-    parseValue,
-    parseValueOrVar,
-    parseJSONOrVar
-} = await import(/* webpackIgnore: true */ '/scripts/extensions/third-party/STLibs-Nox-Library/scripts/parsing.js');
+const { shorthandJSONResolver, shorthandValueResolver } = NoxLib.CoercionAndShorthand.VarShorthand
 
+/**
+ * @typedef {import('/scripts/slash-commands/SlashCommand.js').NamedArguments} NamedArguments
+ * @typedef {import('/scripts/slash-commands/SlashCommand.js').UnnamedArguments} UnnamedArguments
+ *
+ * @typedef {import('lodash').PropertyPath} PropertyPath
+ */
 
 /**
  * Handles the '/dict-at' slash command for retrieving multiple values from a dictionary.
  *
- * @param {Object} args - Slash command arguments.
- * @param {[String, String[]]} target - Target dictionary / variable.
+ * @param {NamedArguments} args - Slash command arguments.
+ * @param {[String, PropertyPath]} target - Target dictionary / variable.
  * @returns {Promise<String>} - The values at the specified paths.
  */
 export async function dictAtCMD(args, [target, ...paths]) {
     return JSON.stringify(
         at(
-            parseJSONOrVar(target, args),
-            paths
+            shorthandJSONResolver(target, args),
+            ...paths
         )
     );
 }
@@ -26,18 +29,17 @@ export async function dictAtCMD(args, [target, ...paths]) {
 /**
  * Handles the '/dict-get' slash command for retrieving a single value from a dictionary.
  *
- * @param {Object} args - Slash command arguments.
+ * @param {NamedArguments} args - Slash command arguments.
  * @param {[String, String]} target - Target dictionary / variable.
  * @returns {Promise<*>} - The value at the specified path.
  */
 export async function dictGetCMD(args, [target, path]) {
     const retrieval = get(
-        parseJSONOrVar(target, args),
-        parseValue(path),
-        // @ts-ignore
+        shorthandJSONResolver(target, args),
+        path,
+
         args.default
-            // @ts-ignore
-            ? parseValueOrVar(args.default, args)
+            ? shorthandValueResolver(args.default, args)
             : undefined
     );
 
