@@ -6,4 +6,4 @@ async function initCollectionTools() {
     macros();
 }
 
-initCollectionTools();
+export default initCollectionTools;
