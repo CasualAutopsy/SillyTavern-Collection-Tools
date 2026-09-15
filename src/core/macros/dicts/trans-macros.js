@@ -23,7 +23,7 @@ async function initTransMacros() {
                     name: 'entries',
                     description: 'The list of entries to turn into a dictionary.',
                     sampleValue: '[["a", 1], ["b", 2]], .localVar, $globalVar',
-                    optional: true,
+                    optional: false,
                 },
             ],
             list: {

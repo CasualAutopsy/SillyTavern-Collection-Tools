@@ -32,9 +32,7 @@ function fromEntriesHandler({unnamedArgs: [rawEntries], list: rawList}) {
             return '';
         }
 
-        const split_list = rawList != null
-            ? argH.splitList(rawList, 2)
-            : rawList;
+        const split_list = argH.splitList(rawList, 2);
 
         const values = split_list[1].map((val) => {
             return argH.parseVar(val);

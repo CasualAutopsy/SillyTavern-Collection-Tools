@@ -1,5 +1,6 @@
 # Collection Tools
 
+(Refactoring of commands and macros is in progress.)
 Collection Tools is a library of SillyTavern macros and slash commands for operations related to lists and dictionaries.
 
 ## Usage

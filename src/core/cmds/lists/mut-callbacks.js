@@ -18,7 +18,7 @@ const argH = NoxLib.SlashHandlers.argHandler;
  * @returns {Promise<string>} - The stringified length.
  */
 async function listPushCallback(args, vals) {
-    const { var: list, setVar: mutate } = argH.parseMut(vals.shift() || '[]', args, 'json');
+    const { var: list, setVar: mutate } = argH.parseMut(vals.shift(), args, 'json');
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] First input is not a list.');
@@ -46,7 +46,7 @@ async function listPushCallback(args, vals) {
  * @returns {Promise<string>} - The stringified value.
  */
 async function listPopCallback(args, val) {
-    const { var: list, setVar: mutate } = argH.parseMut(typeof val === 'string' ? val : '', args, 'json');
+    const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] The input is not a list.');
@@ -72,7 +72,7 @@ async function listPopCallback(args, val) {
  * @returns {Promise<string>} - The stringified length.
  */
 async function listUnshiftCallback(args, vals) {
-    const { var: list, setVar: mutate } = argH.parseMut(vals.shift() || '[]', args, 'json');
+    const { var: list, setVar: mutate } = argH.parseMut(vals.shift(), args, 'json');
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] First input is not a list.');
@@ -100,7 +100,7 @@ async function listUnshiftCallback(args, vals) {
  * @returns {Promise<string>} - The stringified value.
  */
 async function listShiftCallback(args, val) {
-    const { var: list, setVar: mutate } = argH.parseMut(typeof val === 'string' ? val : '', args, 'json');
+    const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] The input is not a list.');
