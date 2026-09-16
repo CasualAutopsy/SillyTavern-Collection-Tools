@@ -10,7 +10,7 @@ const argH = NoxLib.SlashHandlers.argHandler;
  */
 
 /**
- * Slash command callback for pushing items to a list
+ * Slash command callback for pushing items to a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
  * @param {string[]} vals - Unnamed arguments.
@@ -38,7 +38,7 @@ async function listPushCallback(args, vals) {
 }
 
 /**
- * Slash command callback for popping an item from a list
+ * Slash command callback for popping an item from a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
  * @param {UnnamedArguments} val - Unnamed arguments.
@@ -64,7 +64,7 @@ async function listPopCallback(args, val) {
 }
 
 /**
- * Slash command callback for unshifting items to a list
+ * Slash command callback for unshifting items to a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
  * @param {string[]} vals - Unnamed arguments.
@@ -92,7 +92,7 @@ async function listUnshiftCallback(args, vals) {
 }
 
 /**
- * Slash command callback for shifting items from a list
+ * Slash command callback for shifting items from a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
  * @param {UnnamedArguments} val - Unnamed arguments.
@@ -117,7 +117,92 @@ async function listShiftCallback(args, val) {
     return String(shifted);
 }
 
+/**
+ * Slash command callback for filling a list with a value.
+ *
+ * @param {NamedArguments} args - Named arguments + slash command scope.
+ * @param {UnnamedArguments} val - Unnamed arguments.
+ *
+ * @returns {Promise<string>} - The stringified filled list.
+ */
+async function listFillCallback(args, val) {
+    const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
+
+    if (!Array.isArray(list)) {
+        throw new TypeError('[Collection Tools | list-fill] The input is not a list.');
+    }
+
+    const fill_val = argH.parse(args.value);
+
+    const
+        start = args.start == null
+            ? argH.parse(args.start, 'int')
+            : undefined,
+        end = args.end == null
+            ? argH.parse(args.end, 'int')
+            : undefined;
+
+    list.fill(fill_val, start, end);
+
+    mutate(list);
+
+    return JSON.stringify(list);
+}
+
+/**
+ * Slash command callback for copying within a list.
+ *
+ * @param {NamedArguments} args - Named arguments + slash command scope.
+ * @param {UnnamedArguments} val - Unnamed arguments.
+ *
+ * @returns {Promise<string>} - The stringified list.
+ */
+async function listCopyWithinCallback(args, val) {
+    const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
+
+    if (!Array.isArray(list)) {
+        throw new TypeError('[Collection Tools | list-copy-within] The input is not a list.');
+    }
+
+    const
+        target = argH.parse(args.target, 'int'),
+        start = argH.parse(args.start, 'int'),
+        end = args.end != null
+            ? argH.parse(args.end, 'int')
+            : undefined;
+
+    list.copyWithin(target, start, end);
+
+    mutate(list);
+
+    return JSON.stringify(list);
+}
+
+/**
+ * Slash command callback for reversing a list.
+ *
+ * @param {NamedArguments} args - Named arguments + slash command scope.
+ * @param {UnnamedArguments} val - Unnamed arguments.
+ *
+ * @returns {Promise<string>} - The stringified reversed list.
+ */
+async function listReverseCallback(args, val) {
+    const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
+
+    if (!Array.isArray(list)) {
+        throw new TypeError('[Collection Tools | list-reverse] The input is not a list.');
+    }
+
+    list.reverse();
+
+    mutate(list);
+
+    return JSON.stringify(list);
+}
+
 export {
     listPushCallback, listPopCallback,
-    listUnshiftCallback, listShiftCallback
+    listUnshiftCallback, listShiftCallback,
+    listFillCallback, listCopyWithinCallback,
+    listReverseCallback
 };

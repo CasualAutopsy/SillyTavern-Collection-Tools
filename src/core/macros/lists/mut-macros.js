@@ -1,6 +1,11 @@
 import { STContext as ctx } from '../../../external/st-context.js';
 
-import { listPushHandler, listPopHandler, listUnshiftHandler, listShiftHandler } from './mut-handlers.js';
+import {
+    listPushHandler, listPopHandler,
+    listUnshiftHandler, listShiftHandler,
+    listFillHandler, listCopyWithinHandler,
+    listSortHandler, listReverseHandler
+} from './mut-handlers.js';
 
 const {
     macros
@@ -126,6 +131,139 @@ async function initMutMacros() {
                 '{{listShift::$globalVar}}',
             ],
             returns: 'The shifted item',
+        }
+    );
+
+    macros.register(
+        'listFill',
+        {
+            category: 'Collection Tools - List Mutation',
+            description: 'A mutation macro that fills a list with a value and returns the new list.',
+            aliases: [
+                {
+                    alias: 'noxListFill',
+                    visible: true,
+                },
+            ],
+            unnamedArgs: [
+                {
+                    name: 'list',
+                    description: 'The list to fill.',
+                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
+                    optional: false,
+                },
+                {
+                    name: 'value',
+                    description: 'The value to fill the list with.',
+                    sampleValue: '42, "hello", .localVar, $globalVar',
+                    optional: false,
+                },
+            ],
+            list: {
+                min: 0,
+                max: 2,
+            },
+            handler: listFillHandler,
+            displayOverride: '{{listFill::list::value::[start]::[end]}}',
+            exampleUsage: [
+                '{{listFill::[1, 2, 3]::42}}',
+                '{{listFill::$globalVar::.localVar}}',
+                '{{listFill::[1, 2, 3]::42::-2}}',
+                '{{listFill::[1, 2, 3]::42::1::5}}',
+            ],
+            returns: 'The new list',
+        }
+    );
+
+    macros.register(
+        'listCopyWithin',
+        {
+            category: 'Collection Tools - List Mutation',
+            description: 'A mutation macro that copies within a list and returns the new list.',
+            aliases: [
+                {
+                    alias: 'noxListCopyWithin',
+                    visible: true,
+                },
+            ],
+            unnamedArgs: [
+                {
+                    name: 'list',
+                    description: 'The list to copy within.',
+                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
+                    optional: false,
+                },
+            ],
+            list: {
+                min: 2,
+                max: 3,
+            },
+            handler: listCopyWithinHandler,
+            displayOverride: '{{listCopyWithin::list::target::start::[end]}}',
+            exampleUsage: [
+                '{{listCopyWithin::[1, 2, 3]::0::1}}',
+                '{{listCopyWithin::$globalVar::0::1}}',
+                '{{listCopyWithin::[1, 2, 3]::0::1::2}}'
+            ],
+            returns: 'The new list',
+        }
+    );
+
+    macros.register(
+        'listSort',
+        {
+            category: 'Collection Tools - List Mutation',
+            description: 'A mutation macro that sorts a list and returns the new list.',
+            aliases: [
+                {
+                    alias: 'noxListSort',
+                    visible: true,
+                },
+            ],
+            unnamedArgs: [
+                {
+                    name: 'list',
+                    description: 'The list to sort.',
+                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
+                    optional: false,
+                },
+            ],
+            handler: listSortHandler,
+            displayOverride: '{{listSort::list}}',
+            exampleUsage: [
+                '{{listSort::[1, 2, 3]}}',
+                '{{listSort::.globalVar}}',
+            ],
+            returns: 'The new list',
+        }
+    );
+
+    macros.register(
+        'listReverse',
+        {
+            category: 'Collection Tools - List Mutation',
+            description: 'A mutation macro that reverses a list and returns the new list.',
+            aliases: [
+                {
+                    alias: 'noxListReverse',
+                    visible: true,
+                },
+            ],
+            unnamedArgs: [
+                {
+                    name: 'list',
+                    description: 'The list to reverse.',
+                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
+                    optional: false,
+                },
+            ],
+            handler: listReverseHandler,
+            displayOverride: '{{listReverse::list}}',
+            exampleUsage: [
+                '{{listReverse::[1, 2, 3]}}',
+                '{{listReverse::$globalVar}}',
+            ],
+            returns: 'The new list',
         }
     );
 }
