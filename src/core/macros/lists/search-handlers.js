@@ -24,9 +24,11 @@ function listAtHandler({unnamedArgs: [rawList, rawIndex]}) {
         return '';
     }
 
-    return typeof list[index] === 'object'
-        ? JSON.stringify(list[index])
-        : String(list[index]);
+    const item = list.at(index);
+
+    return typeof item === 'object'
+        ? JSON.stringify(item)
+        : String(item);
 }
 
 /**

@@ -260,3 +260,8 @@ globalThis.NoxLib.MacroHandlers.argHandler.parseMut = jest.fn(function parseMut(
         }
     }
 });
+// ── stBoolCoercion mock — mirrors NoxLib.MacroHandlers.argHandler.stBoolCoercion behavior ──
+// Coerces any SillyTavern string value into a boolean.
+globalThis.NoxLib.MacroHandlers.argHandler.stBoolCoercion = function stBoolCoercion(arg) {
+    return !['false', 'off', '0', '', null, undefined].includes(arg?.trim()?.toLowerCase());
+};

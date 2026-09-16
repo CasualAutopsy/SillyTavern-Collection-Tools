@@ -135,10 +135,10 @@ async function listFillCallback(args, val) {
     const fill_val = argH.parse(args.value);
 
     const
-        start = args.start == null
+        start = args.start != null
             ? argH.parse(args.start, 'int')
             : undefined,
-        end = args.end == null
+        end = args.end != null
             ? argH.parse(args.end, 'int')
             : undefined;
 

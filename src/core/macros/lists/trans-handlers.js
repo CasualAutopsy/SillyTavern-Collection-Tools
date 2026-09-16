@@ -49,19 +49,25 @@ function listConcatHandler({unnamedArgs: [rawList], list: rawLists}) {
     }
 
     /** @type {any[]} */
-    let concat_lists;
-    rawLists.forEach((val) => {
+    let concat_lists = [];
+    let error_trip = false;
+    for (val of rawLists) {
         const parsed_list = argH.parseVar(val, 'json');
 
-        if (!Array.isArray(val)) {
-            console.error('[Collection Tools | listConcat] One of the inputs is not a list.');
-            return '';
+        if (!Array.isArray(parsed_list)) {
+            error_trip = true;
+            break;
         }
 
         concat_lists.push(parsed_list);
-    });
+    }
 
-    return JSON.stringify(list.concat(...lists));
+    if (error_trip) {
+        console.error('[Collection Tools | listConcat] One of the inputs is not a list.');
+        return '';
+    }
+
+    return JSON.stringify(list.concat(...concat_lists));
 }
 
 /**

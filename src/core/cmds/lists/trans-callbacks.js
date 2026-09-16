@@ -19,10 +19,10 @@ const argH = NoxLib.SlashHandlers.argHandler;
  */
 async function listSliceCallback(args, val) {
     const
-        start = args.start == null
+        start = args.start != null
             ? argH.parse(args.start, 'int')
             : undefined,
-        end = args.end == null
+        end = args.end != null
             ? argH.parse(args.end, 'int')
             : undefined;
 
@@ -55,18 +55,18 @@ async function listConcatCallback(args, vals) {
     }
 
     /** @type {any[]} */
-    let concat_lists;
+    let concat_lists = [];
     vals.forEach((val) => {
         const parsed_list = argH.parseVar(val, args, 'json');
 
-        if (!Array.isArray(val)) {
+        if (!Array.isArray(parsed_list)) {
             throw new TypeError('[Collection Tools | list-concat] One of the inputs is not a list.');
         }
 
         concat_lists.push(parsed_list);
     });
 
-    return JSON.stringify(list.concat(...lists));
+    return JSON.stringify(list.concat(...concat_lists));
 }
 
 /**

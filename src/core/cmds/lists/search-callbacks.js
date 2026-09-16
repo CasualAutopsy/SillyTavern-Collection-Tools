@@ -25,9 +25,11 @@ async function listAtCallback(args, val) {
         throw new TypeError('[Collection Tools | list-at] The input is not a list.');
     }
 
-    return typeof list[index] === 'object'
-        ? JSON.stringify(list[index])
-        : String(list[index]);
+    const item = list.at(index);
+
+    return typeof item === 'object'
+        ? JSON.stringify(item)
+        : String(item);
 }
 
 /**
@@ -41,7 +43,7 @@ async function listAtCallback(args, val) {
  */
 async function listIndexOfCallback(args, val) {
     const parse_search_element = args.parse
-        ? argH.stBoolCoercion(args.parse)
+        ? argH.parse(args.parse, 'bool')
         : true;
     const search_element = parse_search_element
         ? argH.parseVar(args.search, args)
@@ -66,7 +68,7 @@ async function listIndexOfCallback(args, val) {
  */
 async function listLastIndexOfCallback(args, val) {
     const parse_search_element = args.parse
-        ? argH.stBoolCoercion(args.parse)
+        ? argH.parse(args.parse, 'bool')
         : true;
     const search_element = parse_search_element
         ? argH.parseVar(args.search, args)

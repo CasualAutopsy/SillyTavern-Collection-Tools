@@ -9,6 +9,15 @@
 - **Package manager**: npm
 - **Current version**: `1.0.0-alpha`
 
+## Agent Constraints
+
+- **Source code is read-only.** Agents MUST NOT modify any file under `./src/`. All work is confined to `tests/` test spec files (`*.test.js`) only.
+- **Test infrastructure is locked.** Agents MUST NOT modify `tests/setup.js`, `jest.config.js`, `webpack.config.js`, or any other test configuration/script files unless given explicit permission by the user.
+- **Primary focus: test suite coverage.** Write, expand, and maintain Jest tests to reach the stated coverage thresholds (80% branches, 100% functions/lines/statements on `src/core/**/*.js`).
+- **Missing NoxLib mocks.** If a test requires a NoxLib method that is not mocked in `tests/setup.js`, STOP and report it to the user. Request the relevant code snippet from the real NoxLib source and explicit permission to add the mock to the test setup.
+- **Build/deploy is off-limits.** Agents MUST NOT run `npm run build`, `npm run test:cov`, or any command that produces production artifacts. Only `npm test` and `npm run test:watch` are permitted.
+- **Study existing tests first.** Before writing any new test file, review existing test files in the same domain for mocking patterns, scope helpers, and assertion style — follow them. Consistency across the test suite is mandatory.
+
 ## Architecture & Data Flow
 
 ```
