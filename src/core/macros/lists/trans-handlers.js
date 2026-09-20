@@ -17,10 +17,10 @@ const argH = NoxLib.MacroHandlers.argHandler;
  */
 function listSliceHandler({unnamedArgs: [rawList], list: rawIndices}) {
     const
-        start = rawIndices[0] != null
+        start = rawIndices?.[0] != null
             ? argH.parse(rawIndices[0], 'int')
             : undefined,
-        end = rawIndices[1] != null
+        end = rawIndices?.[1] != null
             ? argH.parse(rawIndices[1], 'int')
             : undefined;
     const list = argH.parseVar(rawList, 'json');
@@ -51,7 +51,7 @@ function listConcatHandler({unnamedArgs: [rawList], list: rawLists}) {
     /** @type {any[]} */
     let concat_lists = [];
     let error_trip = false;
-    for (val of rawLists) {
+    for (const val of rawLists) {
         const parsed_list = argH.parseVar(val, 'json');
 
         if (!Array.isArray(parsed_list)) {
@@ -89,8 +89,82 @@ function listFlatHandler({unnamedArgs: [rawList, rawDepth]}) {
     return JSON.stringify(list.flat(depth));
 }
 
+/**
+ * Macro handler for splicing a list immutably.
+ *
+ * @param {MacroExecutionContext} param0 - The macro execution context.
+ *
+ * @returns {String} - The stringified list.
+ */
+function listToSpliceHandler({unnamedArgs: [rawList, rawStart, rawDeleteCount, rawInsert]}) {
+    const list = argH.parseVar(rawList, 'json');
+
+    if (!Array.isArray(list)) {
+        console.error('[Collection Tools | listSplice] The input is not a list.');
+        return '';
+    }
+
+    const
+        start = argH.parse(rawStart, 'int'),
+        delete_count = rawDeleteCount != ''
+            ? argH.parse(rawDeleteCount, 'int')
+            : undefined;
+
+    /** @type {Object|any[]|undefined} */
+    let insert = undefined;
+    try {
+        insert = argH.parse(rawInsert, 'json');
+    } catch {
+        // Skip using insert if it's not valid JSON
+    }
+
+    if (insert != null && Array.isArray(insert) && delete_count != null) {
+        return JSON.stringify(list.toSpliced(start, delete_count, ...insert));
+    } else {
+        return JSON.stringify(list.toSpliced(start, delete_count));
+    }
+}
+
+/**
+ * Macro handler for sorting a list immutably.
+ *
+ * @param {MacroExecutionContext} param0 - The macro execution context.
+ *
+ * @returns {String} - The stringified sorted list.
+ */
+function listToSortHandler({unnamedArgs: [rawList]}) {
+    const list = argH.parseVar(rawList, 'json');
+
+    if (!Array.isArray(list)) {
+        console.error('[Collection Tools | listSort] Input is not a list.');
+        return '';
+    }
+
+    return JSON.stringify(list.toSorted());
+}
+
+/**
+ * Macro handler for reversing a list immutably.
+ *
+ * @param {MacroExecutionContext} param0 - The macro execution context.
+ *
+ * @returns {String} - The stringified reversed list.
+ */
+function listToReverseHandler({unnamedArgs: [rawList]}) {
+    const list = argH.parseVar(rawList, 'json');
+
+    if (!Array.isArray(list)) {
+        console.error('[Collection Tools | listReverse] Input is not a list.');
+        return '';
+    }
+
+    return JSON.stringify(list.toReversed());
+}
+
 export {
     listSliceHandler,
     listConcatHandler,
-    listFlatHandler
+    listFlatHandler,
+    listToSpliceHandler,
+    listToSortHandler, listToReverseHandler
 };

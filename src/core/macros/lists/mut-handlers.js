@@ -121,6 +121,52 @@ function listShiftHandler({unnamedArgs: [rawList]}) {
 }
 
 /**
+ * Macro handler for splicing a list.
+ *
+ * @param {MacroExecutionContext} param0 - The macro execution context.
+ *
+ * @returns {String} - The stringified list of removed items.
+ */
+function listSpliceHandler({unnamedArgs: [rawList, rawStart, rawDeleteCount, rawInsert]}) {
+    const {var: list, setVar: mutate} = argH.parseMut(rawList, 'json');
+
+    if (!Array.isArray(list)) {
+        console.error('[Collection Tools | listSplice] The input is not a list.');
+        return '';
+    }
+
+    const
+        start = argH.parse(rawStart, 'int'),
+        delete_count = rawDeleteCount != ''
+            ? argH.parse(rawDeleteCount, 'int')
+            : undefined;
+
+    /** @type {Object|any[]|undefined} */
+    let insert = undefined;
+    try {
+        insert = argH.parse(rawInsert, 'json');
+
+        if (!Array.isArray(insert)) {
+            console.warn('[Collection Tools | listSplice] Insert is not a list.');
+            throw new TypeError('Insert is not a list.');
+        }
+    } catch {
+        // Skip using insert if it's not valid JSON
+    }
+
+
+    if (insert != null && Array.isArray(insert) && delete_count != null) {
+        list.splice(start, delete_count, ...insert);
+    } else {
+        list.splice(start, delete_count);
+    }
+
+    mutate(list);
+
+    return JSON.stringify(list);
+}
+
+/**
  * Macro handler for filling a list with a value.
  *
  * @param {MacroExecutionContext} param0 - The macro execution context.

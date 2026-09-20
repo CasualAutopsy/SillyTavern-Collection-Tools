@@ -2,7 +2,9 @@ import { STContext as ctx } from '../../../external/st-context.js';
 
 import {
     listAtCallback,
-    listIndexOfCallback, listLastIndexOfCallback
+    listIndexOfCallback, listLastIndexOfCallback,
+    listFindCallback, listFindLastCallback,
+    listFindIndexCallback, listFindLastIndexCallback
 } from './search-callbacks.js';
 
 const {
@@ -116,6 +118,126 @@ async function initSearchSlashCMDs() {
         splitUnnamedArgument: false,
         helpString: '',
         returns: 'The index of the last occurrence of the item',
+    }));
+
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        name: 'list-find',
+        callback: listFindCallback,
+        aliases: ['nox-list-find'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'list',
+                description: 'the list to search in',
+                typeList: [
+                    ARGUMENT_TYPE.LIST,
+                    ARGUMENT_TYPE.VARIABLE_NAME,
+                ],
+                isRequired: true,
+            }),
+        ],
+        unnamedArgumentList: [
+            SlashCommandArgument.fromProps({
+                description: 'the closure to use for searching',
+                typeList: [
+                    ARGUMENT_TYPE.CLOSURE,
+                ],
+                isRequired: true,
+                acceptsMultiple: false,
+            }),
+        ],
+        splitUnnamedArgument: false,
+        helpString: '',
+        returns: 'The first item that satisfies the condition',
+    }));
+
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        name: 'list-find-last',
+        callback: listFindLastCallback,
+        aliases: ['nox-list-find-last'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'list',
+                description: 'the list to search in',
+                typeList: [
+                    ARGUMENT_TYPE.LIST,
+                    ARGUMENT_TYPE.VARIABLE_NAME,
+                ],
+                isRequired: true,
+            }),
+        ],
+        unnamedArgumentList: [
+            SlashCommandArgument.fromProps({
+                description: 'the closure to use for searching',
+                typeList: [
+                    ARGUMENT_TYPE.CLOSURE,
+                ],
+                isRequired: true,
+                acceptsMultiple: false,
+            }),
+        ],
+        splitUnnamedArgument: false,
+        helpString: '',
+        returns: 'The last item that satisfies the condition',
+    }));
+
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        name: 'list-find-index',
+        callback: listFindIndexCallback,
+        aliases: ['nox-list-find-index'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'list',
+                description: 'the list to search in',
+                typeList: [
+                    ARGUMENT_TYPE.LIST,
+                    ARGUMENT_TYPE.VARIABLE_NAME,
+                ],
+                isRequired: true,
+            }),
+        ],
+        unnamedArgumentList: [
+            SlashCommandArgument.fromProps({
+                description: 'the closure to use for searching',
+                typeList: [
+                    ARGUMENT_TYPE.CLOSURE,
+                ],
+                isRequired: true,
+                acceptsMultiple: false,
+            }),
+        ],
+        splitUnnamedArgument: false,
+        helpString: '',
+        returns: 'The index of the first item that satisfies the condition',
+    }));
+
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        name: 'list-find-last-index',
+        callback: listFindLastIndexCallback,
+        aliases: ['nox-list-find-last-index'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'list',
+                description: 'the list to search in',
+                typeList: [
+                    ARGUMENT_TYPE.LIST,
+                    ARGUMENT_TYPE.VARIABLE_NAME,
+                ],
+                isRequired: true,
+            }),
+        ],
+        unnamedArgumentList: [
+            SlashCommandArgument.fromProps({
+                description: 'the closure to use for searching',
+                typeList: [
+                    ARGUMENT_TYPE.CLOSURE,
+                ],
+                isRequired: true,
+                acceptsMultiple: false,
+            }),
+        ],
+        splitUnnamedArgument: false,
+        helpString: '',
+        returns: 'The index of the last item that satisfies the condition',
     }));
 }
 
