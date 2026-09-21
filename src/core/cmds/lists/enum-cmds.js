@@ -5,11 +5,15 @@ import {
     listMapCallback
 } from './enum-callbacks.js';
 
+const { EnumProviders } = NoxLib.SlashHandlers;
+
 const {
     SlashCommandParser, SlashCommand,
     SlashCommandNamedArgument, SlashCommandArgument,
     ARGUMENT_TYPE,
 } = ctx;
+
+const listAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "array");
 
 async function initEnumSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
@@ -24,6 +28,7 @@ async function initEnumSlashCMDs() {
                     ARGUMENT_TYPE.LIST,
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
+                enumProvider: listAndShorthands,
                 isRequired: true,
             }),
         ],
@@ -54,13 +59,14 @@ async function initEnumSlashCMDs() {
                     ARGUMENT_TYPE.LIST,
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
+                enumProvider: listAndShorthands,
                 isRequired: true,
             }),
             SlashCommandNamedArgument.fromProps({
-                name: 'to-type',
+                name: 'toType',
                 description: 'the data type to convert the items to',
                 typeList: [
-                    ARGUMENT_TYPE.DATA_TYPE,
+                    ARGUMENT_TYPE.STRING,
                 ],
                 isRequired: false,
             }),
