@@ -1,4 +1,13 @@
+import { STPublic as pub } from '../../../external/st-public.js';
+
+
 const argH = NoxLib.SlashHandlers.argHandler;
+
+const {
+    SlashCommandClosure,
+    SlashCommandBreakController,
+    SlashCommandNamedArgumentAssignment
+} = pub;
 
 /**
  * @import {} from '../../../../global'
@@ -7,6 +16,10 @@ const argH = NoxLib.SlashHandlers.argHandler;
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').NamedArguments} NamedArguments
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').UnnamedArguments} UnnamedArguments
+ */
+
+/**
+ * @typedef {import('../../../../../../../slash-commands/SlashCommandClosure.js').SlashCommandClosure} Closure
  */
 
 /**
@@ -179,6 +192,28 @@ async function listCopyWithinCallback(args, val) {
 }
 
 /**
+ * Slash command callback for sorting a list.
+ *
+ * @param {NamedArguments} args - Named arguments + slash command scope.
+ * @param {Closure} val - Unnamed arguments.
+ *
+ * @returns {Promise<string>} - The stringified sorted list.
+ */
+async function listSortCallback(args, val) {
+    const { var: list, setVar: mutate } = argH.parseMut(args.list, args, 'json');
+
+    if (!Array.isArray(list)) {
+        throw new TypeError('[Collection Tools | list-sort] The input is not a list.');
+    }
+
+    list.sort();
+
+    mutate(list);
+
+    return JSON.stringify(list);
+}
+
+/**
  * Slash command callback for reversing a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
@@ -204,5 +239,5 @@ export {
     listPushCallback, listPopCallback,
     listUnshiftCallback, listShiftCallback,
     listFillCallback, listCopyWithinCallback,
-    listReverseCallback
+    listSortCallback, listReverseCallback
 };

@@ -3,6 +3,7 @@ import { STContext as ctx } from '../../../external/st-context.js';
 import {
     listPushHandler, listPopHandler,
     listUnshiftHandler, listShiftHandler,
+    listSpliceHandler,
     listFillHandler, listCopyWithinHandler,
     listSortHandler, listReverseHandler
 } from './mut-handlers.js';
@@ -131,6 +132,56 @@ async function initMutMacros() {
                 '{{listShift::$globalVar}}',
             ],
             returns: 'The shifted item',
+        }
+    );
+
+    macros.register(
+        'listSplice',
+        {
+            category: 'Collection Tools - List Mutation',
+            description: 'A mutation macro that splices a list and returns the new list.',
+            aliases: [
+                {
+                    alias: 'noxListSplice',
+                    visible: true,
+                },
+            ],
+            unnamedArgs: [
+                {
+                    name: 'list',
+                    description: 'The list to splice.',
+                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
+                    optional: false,
+                },
+                {
+                    name: 'start',
+                    description: 'The start index to splice from.',
+                    sampleValue: '0, 1, -2',
+                    optional: true,
+                },
+                {
+                    name: 'delete_count',
+                    description: 'The number of items to delete.',
+                    sampleValue: '1, 2',
+                    optional: true,
+                },
+                {
+                    name: 'insert',
+                    description: 'The list of items to insert.',
+                    sampleValue: '[4, 5], .localVar, $globalVar',
+                    optional: true,
+                },
+            ],
+            handler: listSpliceHandler,
+            displayOverride: '{{listSplice::list::[start]::[delete_count]::[insert]}}',
+            exampleUsage: [
+                '{{listSplice::[1, 2, 3]}}',
+                '{{listSplice::$globalVar}}',
+                '{{listSplice::[1, 2, 3]::1}}',
+                '{{listSplice::[1, 2, 3]::1::2}}',
+                '{{listSplice::[1, 2, 3]::1::2::[4, 5]}}',
+            ],
+            returns: 'The new list',
         }
     );
 

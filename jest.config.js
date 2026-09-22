@@ -1,6 +1,6 @@
 export default {
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/tests/setup-slash.js', '<rootDir>/tests/setup-macro.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   moduleFileExtensions: ['js'],
   testMatch: ['<rootDir>/tests/**/*.test.js'],
   passWithNoTests: true,

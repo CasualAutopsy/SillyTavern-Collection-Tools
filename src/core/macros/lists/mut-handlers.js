@@ -283,6 +283,7 @@ function listReverseHandler({unnamedArgs: [rawList]}) {
 export {
     listPushHandler, listPopHandler,
     listUnshiftHandler, listShiftHandler,
+    listSpliceHandler,
     listFillHandler, listCopyWithinHandler,
     listSortHandler, listReverseHandler
 };

@@ -1,4 +1,13 @@
+import { STPublic as pub } from '../../../external/st-public.js';
+
+
 const argH = NoxLib.SlashHandlers.argHandler;
+
+const {
+    SlashCommandClosure,
+    SlashCommandBreakController,
+    SlashCommandNamedArgumentAssignment
+} = pub;
 
 /**
  * @import {} from '../../../../global.js'
@@ -8,6 +17,35 @@ const argH = NoxLib.SlashHandlers.argHandler;
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').NamedArguments} NamedArguments
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').UnnamedArguments} UnnamedArguments
  */
+
+/**
+ * @typedef {import('../../../../../../../slash-commands/SlashCommandClosure.js').SlashCommandClosure} Closure
+ */
+
+/**
+ * Slash command callback for replacing an item in a list.
+ *
+ * @param {NamedArguments} args - Named arguments + slash command scope.
+ * @param {string} val - Unnamed arguments.
+ *
+ * @returns {Promise<string>} - The stringified list.
+ */
+async function listWithCallback(args, val) {
+    const list = argH.parseVar(args.list, args, 'json');
+    const value = argH.parseVar(val, args);
+
+    if (!Array.isArray(list)) {
+        throw new TypeError('[Collection Tools | list-with] The list argument is not a list.');
+    }
+
+    if (value == null) {
+        throw new TypeError('[Collection Tools | list-with] The value argument is undefined.');
+    }
+
+    const new_list = list.with(args.index, value);
+
+    return JSON.stringify(new_list);
+}
 
 /**
  * Slash command callback for slicing a list.
@@ -70,7 +108,7 @@ async function listConcatCallback(args, vals) {
 }
 
 /**
- * Slash command callback for flattening a list
+ * Slash command callback for flattening a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
  * @param {UnnamedArguments} val - Unnamed arguments.
@@ -89,6 +127,7 @@ async function listFlatCallback(args, val) {
 }
 
 export {
+    listWithCallback,
     listSliceCallback,
     listConcatCallback,
     listFlatCallback

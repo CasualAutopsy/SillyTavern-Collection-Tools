@@ -2,264 +2,179 @@
 
 ## Project Overview
 
-**Collection Tools** is a SillyTavern browser extension providing macros and slash commands for list and dictionary operations. It depends on [STLibs-Nox-Library](https://github.com/CasualAutopsy/STLibs-Nox-Library) for its argument parsing and variable scope resolution.
+**SillyTavern-Collection-Tools** is a SillyTavern browser extension providing macros and slash commands for list and dictionary manipulation. It extends SillyTavern's scripting capabilities via the STLibs-Nox-Library dependency, offering operations like push/pop, index-of, sorting, slicing, and dictionary key/value enumeration.
 
-- **Runtime**: Browser (SillyTavern extension), bundled for client-side execution
-- **Module system**: ESM (`"type": "module"`)
-- **Package manager**: npm
-- **Current version**: `1.0.0-alpha`
-
-## Agent Constraints
-
-- **Source code is read-only.** Agents MUST NOT modify any file under `./src/`. All work is confined to `tests/` test spec files (`*.test.js`) only.
-- **Test infrastructure is locked.** Agents MUST NOT modify `tests/setup.js`, `jest.config.js`, `webpack.config.js`, or any other test configuration/script files unless given explicit permission by the user.
-- **Primary focus: test suite coverage.** Write, expand, and maintain Jest tests to reach the stated coverage thresholds (80% branches, 100% functions/lines/statements on `src/core/**/*.js`).
-- **Missing NoxLib mocks.** If a test requires a NoxLib method that is not mocked in `tests/setup.js`, STOP and report it to the user. Request the relevant code snippet from the real NoxLib source and explicit permission to add the mock to the test setup.
-- **Build/deploy is off-limits.** Agents MUST NOT run `npm run build`, `npm run test:cov`, or any command that produces production artifacts. Only `npm test` and `npm run test:watch` are permitted.
-- **Study existing tests first.** Before writing any new test file, review existing test files in the same domain for mocking patterns, scope helpers, and assertion style — follow them. Consistency across the test suite is mandatory.
+- **License**: AGPL-3.0
+- **Version**: 1.2.0-alpha
+- **Author**: CasualAutopsy
 
 ## Architecture & Data Flow
 
+### Three-Layer Modular Registration
+
 ```
-src/main.js
-  └── src/core/index.js
-        ├── src/core/cmds/index.js          → slash command registration
-        │     ├── lists/  (mut-cmds.js + mut-callbacks.js)
-        │     ├── dicts/  (enum-cmds.js + enum-callbacks.js, trans-cmds.js + trans-callbacks.js)
-        │     └── collections/  (stub — not yet implemented)
-        └── src/core/macros/index.js        → macro registration
-              ├── lists/  (mut-macros.js + mut-handlers.js)
-              ├── dicts/  (enum-macros.js + enum-handlers.js, trans-macros.js + trans-handlers.js)
-              └── collections/  (stub — not yet implemented)
-```
-
-### Two Parallel Registration Paths
-
-Every operation has **two** implementations — one for slash commands, one for macros:
-
-| Layer | File | Purpose |
-|-------|------|---------|
-| **Commands** | `*-cmds.js` | Build `SlashCommand` objects, wire to `SlashCommandParser` |
-| **Callbacks** | `*-callbacks.js` | Async functions receiving `(args, vals)` from slash parser |
-| **Macros** | `*-macros.js` | Register via `macros.register(name, config)` |
-| **Handlers** | `*-handlers.js` | Sync functions receiving `{unnamedArgs, list}` from macro engine |
-
-### Context Bridge
-
-`src/external/st-context.js` pulls all SillyTavern APIs from `SillyTavern.getContext()` once, then re-exports as `STContext`. All modules import from this bridge, not directly from the global.
-
-```js
-// st-context.js — single source of truth for SillyTavern APIs
-const { SlashCommandParser, SlashCommand, macros, ... } = SillyTavern.getContext();
-export const STContext = { SlashCommandParser, SlashCommand, macros, ... };
+main.js
+  └── core/index.js          ← Bootstrap: registers all cmds + macros
+        ├── cmds/index.js    ← Delegates to lists/dicts/collections
+        │     ├── lists/*-cmds.js    ← /list-* slash command registration
+        │     ├── dicts/*-cmds.js    ← /dict-* slash command registration
+        │     └── collections/index.js ← Stub (future)
+        │
+        └── macros/index.js  ← Delegates to lists/dicts/collections
+              ├── lists/*-macros.js  ← Macro registration (listIndex, listPush, etc.)
+              ├── dicts/*-macros.js  ← Macro registration (getDictKeys, etc.)
+              └── collections/index.js ← Stub (future)
 ```
 
-### NoxLib Integration
+### Execution Pattern
 
-All argument parsing delegates to `NoxLib`:
+Each feature follows a consistent two-file pattern:
 
-- **Slash commands**: `NoxLib.SlashHandlers.argHandler` — methods: `parse()`, `parseVar()`, `parseMut()`
-- **Macros**: `NoxLib.MacroHandlers.argHandler` — methods: `parse()`, `parseVar()`, `parseMut()`, `splitList()`, `zipList()`
+1. **`*-cmds.js` / `*-macros.js`** — Registration layer: calls `SlashCommandParser.addCommandObject()` or `macros.register()` with command metadata
+2. **`*-callbacks.js` / `*-handlers.js`** — Implementation layer: async callback functions that perform the actual work
 
-### Variable Scoping
+Operations are organized by **data type** (lists, dicts, collections) and **operation category**:
 
-Both NoxLib and the test mocks support shorthand variable notation:
-- `$varname` → global scope
-- `.varname` → local scope
-- @varname → scope lookup
+| Category | Lists | Dicts | Collections |
+|----------|-------|-------|-------------|
+| **Enum** (read keys/entries) | `listIndex`, `listEntries` | `getDictKeys`, `getDictValues`, `getDictEntries` | — |
+| **Mut** (in-place mutation) | `listPush`, `listPop`, `listUnshift`, `listShift`, `listSplice`, `listFill`, `listCopyWithin`, `listSort`, `listReverse` | — | — |
+| **Search** (index/find) | `listAt`, `listIndexOf`, `listLastIndexOf` | — | — |
+| **Test** (predicate) | `listIncludes`, `listEvery`, `listSome` | — | — |
+| **Trans** (immutable transform) | `listSlice`, `listConcat`, `listFlat` | `dictFromEntries` | — |
 
-### Error Handling
+### Integration Layer
 
-- **Slash callbacks**: throw `TypeError` / `Error` (propagates to SillyTavern)
-- **Macro handlers**: `console.error()` + return empty string `''` (graceful degradation)
+`src/external/` re-exports SillyTavern runtime APIs:
+- **`st-context.js`** — Static access to `SillyTavern.getContext()` values
+- **`st-public.js`** — Dynamic import for closure types at runtime
+
+### External Dependency
+
+The extension requires `STLibs-Nox-Library` (declared in `manifest.json` as a hard dependency). All argument parsing delegates to `NoxLib.MacroHandlers.argHandler`.
 
 ## Key Directories
 
 | Directory | Purpose |
 |-----------|---------|
-| `src/core/cmds/` | Slash command registration + callback logic |
-| `src/core/macros/` | Macro registration + handler logic |
-| `src/external/` | SillyTavern context bridge (imports from `SillyTavern.getContext()`) |
-| `src/__deprecated__/` | Old registry pattern — being migrated to `src/core/` |
-| `tests/` | Jest test suites mirroring `src/core/` structure |
-| `tests/mocks/` | Empty — mocks are inline in `tests/setup.js` |
+| `src/core/` | Active extension code: registration + handlers/callbacks |
+| `src/core/macros/` | STScript macro definitions and handlers |
+| `src/core/cmds/` | Slash command definitions and async callbacks |
+| `src/external/` | SillyTavern runtime API wrappers |
+| `src/__deprecated__/` | Legacy command docs (HTML help text, STScript examples) |
+| `tests/` | Jest test suite mirroring `src/core/` structure |
+| `dist/` | Build output (`main.bundled.js`) |
 
 ## Development Commands
 
 ```bash
-# Build production bundle → dist/main.bundled.js
+# Build production bundle
 npm run build
 
-# Run tests
+# Run tests (verbose)
 npm test
 
 # Watch mode
 npm run test:watch
 
-# Coverage (80% branches, 100% functions/lines/statements)
+# Coverage report
 npm run test:cov
 ```
 
-Coverage thresholds are strict: **100% line/statement/function coverage** on all non-index source files under `src/core/`.
-
 ## Code Conventions & Common Patterns
 
-### Naming
+### Language & Module System
+- **Pure JavaScript** (no TypeScript compilation). ESM throughout (`"type": "module"` in package.json).
+- No linter or formatter configured.
+- Babel transpiles via `@babel/preset-env` only.
 
-- **Commands**: kebab-case — `list-push`, `dict-get-keys`, `dict-from-entries`
-- **Macros**: camelCase — `listPush`, `getDictKeys`, `dictFromEntries`
-- **Handlers/Callbacks**: camelCase + suffix — `listPushCallback`, `listPushHandler`
-- **Registration functions**: `initXxx` — `initMutSlashCMDs`, `initEnumMacros`
-- **All aliases**: prefixed with `nox-` — `nox-list-push`, `nox-dict-get-keys`
+### Naming Conventions
+- **Files**: kebab-case (`mut-handlers.js`, `search-cmds.js`)
+- **Functions**: camelCase (`listIndexHandler`, `fromEntriesCallback`)
+- **Slash commands**: kebab-case (`/list-index`, `/dict-get-keys`)
+- **Macros**: camelCase with prefix (`listIndex`, `listPush`, `getDictKeys`)
 
-### Slash Command Registration Pattern
+### Error Handling
+- Handlers use `console.error()` for validation failures (e.g., wrong datatype, missing arguments).
+- Tests verify error paths via `jest.spyOn(console, 'error').mockImplementation()`.
 
-```js
-// src/core/cmds/lists/mut-cmds.js
-import { STContext as ctx } from '../../../external/st-context.js';
-import { listPushCallback } from './mut-callbacks.js';
-const { SlashCommandParser, SlashCommand, SlashCommandNamedArgument, SlashCommandArgument, ARGUMENT_TYPE } = ctx;
+### Async Patterns
+- **Slash command callbacks** are `async` functions returning results to SillyTavern's command parser.
+- **Macro handlers** are synchronous, returning values directly.
+- Closure-based predicates used in search/test operations (e.g., `search-callbacks.js` captures callback refs).
 
-async function initMutSlashCMDs() {
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-push',
-        callback: listPushCallback,
-        aliases: ['nox-list-push'],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the list to mutate',
-                typeList: [ARGUMENT_TYPE.VARIABLE_NAME, ARGUMENT_TYPE.LIST],
-                isRequired: true,
-            }),
-        ],
-        splitUnnamedArgument: true,
-        helpString: '',
-        returns: 'The new length of the list',
-    }));
-}
+### Variable Persistence
+- Mutation operations use `parseMut` to persist variable changes across SillyTavern's variable scope (local/global Maps).
+- Test setup (`tests/setup.js`) provides `resetVariables()` and `_scope` helpers for this.
+
+### Registration Pattern
+```javascript
+// cmds: SlashCommandParser.addCommandObject(SlashCommand.fromProps({...}))
+// macros: macros.register({ name, handler })
 ```
-
-### Macro Registration Pattern
-
-```js
-// src/core/macros/lists/mut-macros.js
-import { STContext as ctx } from '../../../external/st-context.js';
-import { listPushHandler } from './mut-handlers.js';
-const { macros } = ctx;
-
-async function initMutMacros() {
-    macros.register('listPush', {
-        category: 'Collection Tools - List Mutation',
-        description: 'A mutation macro that pushes items to a list and returns the new list length.',
-        aliases: [{ alias: 'noxListPush', visible: true }],
-        unnamedArgs: [{ name: 'list', description: 'the list to mutate', sampleValue: '[1,2,3], .localVar, $globalVar', optional: false }],
-        handler: listPushHandler,
-        displayOverride: '{{listPush::list::[item1]::[item2]::...}}',
-        exampleUsage: ['{{listPush::[1,2,3]::hello}}', '{{listPush::.myList::42}}'],
-        returns: 'The new length of the list',
-    });
-}
-```
-
-### Handler/Callback Pattern
-
-```js
-// Callback (slash) — async, throws on error
-const argH = NoxLib.SlashHandlers.argHandler;
-async function listPushCallback(args, vals) {
-    const { var: list, setVar: mutate } = argH.parseMut(vals.shift(), args, 'json');
-    if (!Array.isArray(list)) throw new TypeError('[Collection Tools | listPush] First input is not a list.');
-    vals.forEach(val => list.push(argH.parse(val)));
-    mutate(list);
-    return String(list.length);
-}
-
-// Handler (macro) — sync, console.error + '' on error
-const argH = NoxLib.MacroHandlers.argHandler;
-function listPushHandler({ unnamedArgs: [rawList], list: rawVals }) {
-    const { var: list, setVar: mutate } = argH.parseMut(rawList, 'json');
-    if (!Array.isArray(list)) { console.error('[Collection Tools | listPush] First input is not a list.'); return ''; }
-    rawVals.forEach(val => list.push(argH.parse(val)));
-    mutate(list);
-    return String(list.length);
-}
-```
-
-### Module Structure
-
-Each domain (lists, dicts, collections) follows the same file split:
-
-```
-src/core/{cmds,macros}/{domain}/
-├── index.js          → imports sub-modules, calls initXxx()
-├── *-cmds.js / *-macros.js  → registration: build objects, call parser/macros.register()
-└── *-callbacks.js / *-handlers.js  → logic: parse args, operate on data, return result
-```
-
-### Imports
-
-- Always `import { STContext as ctx } from '../../../external/st-context.js'` for SillyTavern APIs
-- Always `const argH = NoxLib.SlashHandlers.argHandler` or `NoxLib.MacroHandlers.argHandler`
-- No direct global access to `SillyTavern` or `NoxLib` in business logic
 
 ## Important Files
 
 | File | Role |
 |------|------|
-| `src/main.js` | Entry point — calls `initCollectionTools()` |
-| `src/core/index.js` | Orchestrates `cmds()` + `macros()` initialization |
-| `src/external/st-context.js` | SillyTavern API bridge |
-| `manifest.json` | SillyTavern extension manifest (depends on `third-party/STLibs-Nox-Library`) |
-| `webpack.config.js` | ESM → bundled output at `dist/main.bundled.js` |
-| `jest.config.js` | Jest config: `happy-dom` env, 100% coverage thresholds |
-| `tests/setup.js` | Global mocks for `SillyTavern`, `NoxLib`, `variables`, `NamedArguments` |
-| `global.d.ts` | Extends NoxLib type definitions |
+| `src/main.js` | Entry point — calls `initExt()` |
+| `src/core/index.js` | Bootstrap — wires up all commands and macros |
+| `manifest.json` | SillyTavern extension manifest (loading_order: 2, depends on Nox Library) |
+| `package.json` | NPM manifest, scripts, dependencies |
+| `webpack.config.js` | Webpack 5 build config (Babel + Terser) |
+| `jest.config.js` | Jest config (100% coverage threshold on handlers) |
+| `tests/setup.js` | Test environment: mocks `globalThis.SillyTavern`, imports NoxLib |
+| `global.d.ts` | Ambient type declarations for NoxLib types |
 
 ## Runtime/Tooling Preferences
 
-- **Node.js** for build/test (ESM, `webpack`, `jest`)
-- **Babel** (`@babel/preset-env`) for JS transpilation in webpack
-- **Terser** for production minification
-- **No Bun** — project uses Node with `--experimental-vm-modules` for Jest ESM support
-- **No TypeScript** — uses JSDoc `@typedef` and `@import` annotations instead
-- **ESM only** — `"type": "module"`, all files use `.js` with `import`/`export`
+- **Runtime**: Node.js (for build/test); runs in browser (SillyTavern) at runtime
+- **Package manager**: npm (no lock file in repo — check for `package-lock.json`)
+- **Module system**: ESM only (`"type": "module"`)
+- **Bundler**: Webpack 5 → `dist/main.bundled.js`
+- **Transpiler**: Babel with `@babel/preset-env`
+- **Minifier**: Terser (comments stripped)
+- **Test environment**: Jest v30 with `--experimental-vm-modules` (ESM support)
+- **No TypeScript compilation** — `global.d.ts` is ambient-only for editor support
 
 ## Testing & QA
 
 ### Framework
-
-- **Jest** with `happy-dom` (configured in `jest.config.js` as `testEnvironment: 'node'`)
-- **ESM support** via `NODE_OPTIONS='--experimental-vm-modules'`
+- **Jest v30.5.1** with ESM via `NODE_OPTIONS='--experimental-vm-modules'`
+- Test environment: `node` (not `happy-dom` — happy-dom is a devDependency but not used in jest.config)
 
 ### Test Structure
-
-Tests mirror the source tree:
-
+Tests mirror `src/core/` under `tests/core/`:
 ```
-tests/
-├── setup.js                          ← global mocks (SillyTavern, NoxLib, variables)
-├── varscope-smoke.test.js            ← smoke test for varScope/resolve mocks
-└── core/
-      ├── cmds/
-      │     ├── lists/  mut-callbacks.test.js
-      │     └── dicts/  enum-callbacks.test.js, trans-callbacks.test.js
-      └── macros/
-            ├── lists/  mut-handlers.test.js
-            └── dicts/  enum-handlers.test.js, trans-handlers.test.js
+tests/core/
+  ├── macros/
+  │     ├── lists/
+  │     │     ├── mut-handlers.test.js    ← Fully implemented (9 handlers)
+  │     │     ├── enum-handlers.test.js   ← TODO stub
+  │     │     ├── search-handlers.test.js ← TODO stub
+  │     │     ├── trans-handlers.test.js  ← TODO stub
+  │     │     └── test-handlers.test.js   ← TODO stub
+  │     └── dicts/
+  │           ├── enum-handlers.test.js   ← TODO stub
+  │           └── trans-handlers.test.js  ← TODO stub
+  └── cmds/
+        ├── lists/
+        │     ├── enum-callbacks.test.js  ← TODO stub
+        │     ├── mut-callbacks.test.js   ← TODO stub
+        │     ├── search-callbacks.test.js← TODO stub
+        │     ├── test-callbacks.test.js  ← TODO stub
+        │     └── trans-callbacks.test.js ← TODO stub
+        └── dicts/
+              ├── enum-callbacks.test.js  ← TODO stub
+              └── trans-callbacks.test.js ← TODO stub
 ```
+
+### Coverage Thresholds
+- **Functions/Lines/Statements**: 100%
+- **Branches**: 80%
+- **Scope**: `src/core/**/*.js` excluding `index.js`, `*-cmds.js`, `*-macros.js` (only handler/callback files)
 
 ### Test Patterns
-
-- **Mocks** are global in `setup.js` — override per-test with `mockClear()` / `mockReturnValue()`
-- **Scope helpers**: `makeScope(list)` factory creates `{ args, setVariable }` for slash command tests
-- **Variable stores**: `globalThis.variables` and `resetVariables()` for macro scope isolation
-- **Assertions**: standard Jest (`toBe`, `toEqual`, `toThrow`, `rejects.toThrow`, `toHaveBeenCalledWith`)
-- **Coverage targets**: 80% branches, 100% functions/lines/statements on `src/core/**/*.js` (excludes `index.js` and `*-cmds.js`/`*-macros.js` registration files)
-
-### Adding Tests
-
-1. Create test file mirroring source path: `tests/core/{cmds,macros}/{domain}/{file}.test.js`
-2. Import from corresponding `src/core/...` path
-3. Use `beforeEach(() => { NoxLib.SlashHandlers.argHandler.parseVar.mockClear() })` to clear mocks
-4. For slash callbacks: build scope with `makeScope()`, call `await callback(args, vals)`
-5. For macro handlers: call `handler({ unnamedArgs: [...], list: [...] })` directly
+- `describe`/`test` blocks organized by concern: return values, console errors, datatype parsing, shorthand variables
+- `beforeEach`/`afterEach` for cleanup via `resetVariables()`
+- No CI configuration exists — tests run locally only

@@ -19,6 +19,11 @@ const argH = NoxLib.MacroHandlers.argHandler;
 function getKeysHandler({unnamedArgs: [rawDict]}) {
     const dict = argH.parseVar(rawDict, 'json');
 
+    if (typeof dict !== 'object' || Array.isArray(dict)) {
+        console.error('[Collection Tools | getKeys] Input is not a dictionary.');
+        return '';
+    }
+
     return JSON.stringify(Object.keys(dict));
 }
 
@@ -33,6 +38,11 @@ function getKeysHandler({unnamedArgs: [rawDict]}) {
 function getValuesHandler({unnamedArgs: [rawDict]}) {
     const dict = argH.parseVar(rawDict, 'json');
 
+    if (typeof dict !== 'object' || Array.isArray(dict)) {
+        console.error('[Collection Tools | getValues] Input is not a dictionary.');
+        return '';
+    }
+
     return JSON.stringify(Object.values(dict));
 }
 
@@ -46,6 +56,11 @@ function getValuesHandler({unnamedArgs: [rawDict]}) {
  */
 function getEntriesHandler({unnamedArgs: [rawDict]}) {
     const dict = argH.parseVar(rawDict, 'json');
+
+    if (typeof dict !== 'object' || Array.isArray(dict)) {
+        console.error('[Collection Tools | getEntries] Input is not a dictionary.');
+        return '';
+    }
 
     return JSON.stringify(Object.entries(dict));
 }

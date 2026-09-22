@@ -4,7 +4,7 @@ import {
     listPopCallback, listPushCallback,
     listUnshiftCallback, listShiftCallback,
     listFillCallback, listCopyWithinCallback,
-    listReverseCallback
+    listSortCallback, listReverseCallback
 } from './mut-callbacks.js';
 
 const { EnumProviders } = NoxLib.SlashHandlers;
@@ -210,6 +210,27 @@ async function initMutSlashCMDs() {
         splitUnnamedArgument: false,
         helpString: '',
         returns: 'The copied within list',
+    }));
+
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+        name: 'list-sort',
+        callback: listSortCallback,
+        aliases: ['nox-list-sort'],
+        unnamedArgumentList: [
+            SlashCommandArgument.fromProps({
+                description: 'the list to sort',
+                typeList: [
+                    ARGUMENT_TYPE.LIST,
+                    ARGUMENT_TYPE.VARIABLE_NAME,
+                ],
+                enumProvider: listAndShorthands,
+                isRequired: true,
+                acceptsMultiple: false,
+            }),
+        ],
+        splitUnnamedArgument: false,
+        helpString: '',
+        returns: 'The sorted list',
     }));
 
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
