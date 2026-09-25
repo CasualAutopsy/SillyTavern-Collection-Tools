@@ -54,7 +54,6 @@ async function getEntriesCallback(args, val) {
     return JSON.stringify(Object.entries(value));
 }
 
-
 export {
     getKeysCallback, getValuesCallback, getEntriesCallback
 };

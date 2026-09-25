@@ -1,13 +1,4 @@
-import { STPublic as pub } from '../../../external/st-public.js';
-
-
 const argH = NoxLib.SlashHandlers.argHandler;
-
-const {
-    SlashCommandClosure,
-    SlashCommandBreakController,
-    SlashCommandNamedArgumentAssignment
-} = pub;
 
 /**
  * @import {} from '../../../../global'
@@ -33,6 +24,10 @@ const {
 async function listPushCallback(args, vals) {
     const { var: list, setVar: mutate } = argH.parseMut(vals.shift(), args, 'json');
 
+    const return_length = args.returnLength != null
+        ? argH.parse(args.returnLen, 'bool')
+        : false;
+
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] First input is not a list.');
     }
@@ -47,19 +42,27 @@ async function listPushCallback(args, vals) {
 
     mutate(list);
 
-    return String(list.length);
+    if (return_length) {
+        return String(list.length);
+    } else {
+        return String(list);
+    }
 }
 
 /**
  * Slash command callback for popping an item from a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
- * @param {UnnamedArguments} val - Unnamed arguments.
+ * @param {string} val - Unnamed arguments.
  *
  * @returns {Promise<string>} - The stringified value.
  */
 async function listPopCallback(args, val) {
     const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
+
+    let n_pop = args.nPop != null
+        ? argH.parse(args.nPop, 'int')
+        : null;
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] The input is not a list.');
@@ -69,11 +72,21 @@ async function listPopCallback(args, val) {
         throw new Error('[Collection Tools | listPop] The list is empty.');
     }
 
-    const popped = list.pop();
+    if (n_pop != null && n_pop > list.length) {
+        n_pop = list.length;
+    }
+
+    /** @type {any|any[]} */
+    let popped_items;
+    if (n_pop != null && n_pop > 1) {
+        popped_items = list.splice(list.length - n_pop, n_pop);
+    } else {
+        popped_items = list.pop();
+    }
 
     mutate(list);
 
-    return String(popped);
+    return String(popped_items);
 }
 
 /**
@@ -86,6 +99,10 @@ async function listPopCallback(args, val) {
  */
 async function listUnshiftCallback(args, vals) {
     const { var: list, setVar: mutate } = argH.parseMut(vals.shift(), args, 'json');
+
+    const return_length = args.returnLength != null
+        ? argH.parse(args.returnLen, 'bool')
+        : false;
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] First input is not a list.');
@@ -101,19 +118,27 @@ async function listUnshiftCallback(args, vals) {
 
     mutate(list);
 
-    return String(list.length);
+    if (return_length) {
+        return String(list.length);
+    } else {
+        return String(list);
+    }
 }
 
 /**
  * Slash command callback for shifting items from a list.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
- * @param {UnnamedArguments} val - Unnamed arguments.
+ * @param {string} val - Unnamed arguments.
  *
  * @returns {Promise<string>} - The stringified value.
  */
 async function listShiftCallback(args, val) {
     const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
+
+    let n_pop = args.nShift != null
+        ? argH.parse(args.nShift, 'int')
+        : null;
 
     if (!Array.isArray(list)) {
         throw new TypeError('[Collection Tools | listPop] The input is not a list.');
@@ -123,18 +148,28 @@ async function listShiftCallback(args, val) {
         throw new Error('[Collection Tools | listPop] The list is empty.');
     }
 
-    const shifted = list.shift();
+    if (n_pop != null && n_pop > list.length) {
+        n_pop = list.length;
+    }
+
+    /** @type {any|any[]} */
+    let shifted_items;
+    if (n_pop != null && n_pop > 1) {
+        shifted_items = list.splice(list.length - n_pop, n_pop);
+    } else {
+        shifted_items = list.shift();
+    }
 
     mutate(list);
 
-    return String(shifted);
+    return String(shifted_items);
 }
 
 /**
  * Slash command callback for filling a list with a value.
  *
  * @param {NamedArguments} args - Named arguments + slash command scope.
- * @param {UnnamedArguments} val - Unnamed arguments.
+ * @param {string} val - Unnamed arguments.
  *
  * @returns {Promise<string>} - The stringified filled list.
  */

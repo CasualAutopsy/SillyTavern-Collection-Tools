@@ -23,7 +23,7 @@ function listIndexHandler({unnamedArgs: [rawList]}) {
         return '';
     }
 
-    return JSON.stringify(list.keys());
+    return JSON.stringify([...list.keys()]);
 }
 
 /**
@@ -41,7 +41,7 @@ function listEntriesHandler({unnamedArgs: [rawList]}) {
         return '';
     }
 
-    return JSON.stringify(list.entries());
+    return JSON.stringify([...list.entries()]);
 }
 
 export {

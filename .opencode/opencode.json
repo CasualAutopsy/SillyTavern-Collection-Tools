@@ -1,0 +1,43 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "llamacpp": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Llama C++",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "qwen-36": {
+          "name": "Qwen-3.6 35B-A3B Q6_K-GGUF"
+        }
+      }
+    }
+  },
+  "permission": {
+    "external_directory": {
+      "~/ML/Text/SillyTavern-Launcher/SillyTavern/public/**": "ask"
+    },
+    "edit":{
+        "tests/**/*.test.js": "allow",
+        "tests/setup.js": "deny",
+        ".opencode/soul/**/*.md": "allow",
+        ".opencode/soul/**": "allow",
+        ".opencode/soul/*.md": "allow"
+    },
+    "read": {
+        "tests/**/*.test.js": "allow",
+        "tests/setup.js": "allow",
+        "jest.config.js": "allow",
+        "webpack.config.js": "allow",
+        "package.json": "allow",
+        "src/**/*.js": "allow",
+        "src/__deprecated__/**": "deny",
+        ".opencode/soul/**/*.md": "allow",
+        ".opencode/soul/**": "allow",
+        ".opencode/soul/*.md": "allow"
+    },
+    "skill": "allow",
+    "bash": "ask"
+  }
+}

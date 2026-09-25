@@ -22,6 +22,16 @@ async function initMutSlashCMDs() {
         name: 'list-push',
         callback: listPushCallback,
         aliases: ['nox-list-push'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'returnLength',
+                description: 'whether to return the new length of the list',
+                typeList: [
+                    ARGUMENT_TYPE.BOOLEAN,
+                ],
+                isRequired: false,
+            }),
+        ],
         unnamedArgumentList: [
             SlashCommandArgument.fromProps({
                 description: 'the list to push items to',
@@ -51,6 +61,16 @@ async function initMutSlashCMDs() {
         name: 'list-pop',
         callback: listPopCallback,
         aliases: ['nox-list-pop'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'nPop',
+                description: 'the number of items to pop',
+                typeList: [
+                    ARGUMENT_TYPE.NUMBER,
+                ],
+                isRequired: false,
+            }),
+        ],
         unnamedArgumentList: [
             SlashCommandArgument.fromProps({
                 description: 'the list to pop items from',
@@ -72,6 +92,16 @@ async function initMutSlashCMDs() {
         name: 'list-unshift',
         callback: listUnshiftCallback,
         aliases: ['nox-list-unshift'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'returnLength',
+                description: 'whether to return the new length of the list',
+                typeList: [
+                    ARGUMENT_TYPE.BOOLEAN,
+                ],
+                isRequired: false,
+            }),
+        ],
         unnamedArgumentList: [
             SlashCommandArgument.fromProps({
                 description: 'the list to unshift items to',
@@ -101,6 +131,16 @@ async function initMutSlashCMDs() {
         name: 'list-shift',
         callback: listShiftCallback,
         aliases: ['nox-list-shift'],
+        namedArgumentList: [
+            SlashCommandNamedArgument.fromProps({
+                name: 'nShift',
+                description: 'the number of items to shift',
+                typeList: [
+                    ARGUMENT_TYPE.NUMBER,
+                ],
+                isRequired: false,
+            }),
+        ],
         unnamedArgumentList: [
             SlashCommandArgument.fromProps({
                 description: 'the list to shift items from',

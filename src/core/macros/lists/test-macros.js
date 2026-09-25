@@ -12,7 +12,7 @@ async function initTestMacros() {
     macros.register(
         'listIncludes',
         {
-            category: 'Collection Tools - List Search',
+            category: 'Collection Tools - List Tests',
             description: 'A search macro that checks if a list includes an item and returns true or false.',
             aliases: [
                 {
