@@ -5,7 +5,9 @@ import {
     dictDefineCallback, dictMultiDefineCallback
 } from './mut-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -13,8 +15,13 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
-const dictAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "object");
-const allAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "all");
+
+const stringEnum = EnumProviders.valueDatatype('string');
+const dictEnum = EnumProviders.valueDatatype('object');
+
+const dictAndShorthands = EnumProviders.shorthandAndValue('shorthand-w-scope', 'object');
+const allAndShorthands = EnumProviders.shorthandAndValue('shorthand-w-scope', 'all');
+
 
 async function initMutSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
@@ -30,6 +37,7 @@ async function initMutSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: dictAndShorthands,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -41,6 +49,7 @@ async function initMutSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: dictAndShorthands,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -60,6 +69,8 @@ async function initMutSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.STRING,
                 ],
+                enumProvider: stringEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -71,6 +82,7 @@ async function initMutSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: dictAndShorthands,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -90,6 +102,8 @@ async function initMutSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.STRING,
                 ],
+                enumProvider: stringEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
             SlashCommandNamedArgument.fromProps({
@@ -115,6 +129,7 @@ async function initMutSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE,
                 ],
                 enumProvider: dictAndShorthands,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -136,6 +151,7 @@ async function initMutSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: dictAndShorthands,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -145,6 +161,8 @@ async function initMutSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.DICTIONARY,
                 ],
+                enumProvider: dictEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],

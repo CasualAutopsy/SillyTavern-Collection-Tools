@@ -7,7 +7,9 @@ import {
     listSortCallback, listReverseCallback
 } from './mut-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -15,7 +17,9 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
+
 const listAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "array");
+
 
 async function initMutSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({

@@ -1,7 +1,7 @@
 const {
     SlashCommandParser, SlashCommand,
     SlashCommandNamedArgument, SlashCommandArgument,
-    ARGUMENT_TYPE,
+    ARGUMENT_TYPE, SlashCommandEnumValue,
     macros
 } = SillyTavern.getContext();
 
@@ -15,5 +15,6 @@ export const STContext = {
     SlashCommandNamedArgument,
     SlashCommandArgument,
     ARGUMENT_TYPE,
+    SlashCommandEnumValue,
     macros,
 };

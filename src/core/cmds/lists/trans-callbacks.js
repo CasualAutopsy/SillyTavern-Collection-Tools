@@ -3,15 +3,18 @@ import { STPublic as pub } from '../../../external/st-public.js';
 
 const argH = NoxLib.SlashHandlers.argHandler;
 
+
 const {
     SlashCommandClosure,
     SlashCommandBreakController,
     SlashCommandNamedArgumentAssignment
 } = pub;
 
+
 /**
  * @import {} from '../../../../global.js'
  */
+
 
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').NamedArguments} NamedArguments
@@ -21,6 +24,7 @@ const {
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommandClosure.js').SlashCommandClosure} Closure
  */
+
 
 /**
  * Slash command callback for replacing an item in a list.

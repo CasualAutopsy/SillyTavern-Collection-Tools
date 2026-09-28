@@ -1,8 +1,10 @@
 const argH = NoxLib.SlashHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
+
 
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').NamedArguments} NamedArguments
@@ -12,6 +14,7 @@ const argH = NoxLib.SlashHandlers.argHandler;
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommandClosure.js').SlashCommandClosure} Closure
  */
+
 
 /**
  * Slash command callback for pushing items to a list.
@@ -45,7 +48,7 @@ async function listPushCallback(args, vals) {
     if (return_length) {
         return String(list.length);
     } else {
-        return String(list);
+        return JSON.stringify(list);
     }
 }
 
@@ -86,7 +89,9 @@ async function listPopCallback(args, val) {
 
     mutate(list);
 
-    return String(popped_items);
+    return typeof popped_items === "object"
+        ? JSON.stringify(popped_items)
+        : String(popped_items);
 }
 
 /**
@@ -121,7 +126,7 @@ async function listUnshiftCallback(args, vals) {
     if (return_length) {
         return String(list.length);
     } else {
-        return String(list);
+        return JSON.stringify(list);
     }
 }
 
@@ -136,7 +141,7 @@ async function listUnshiftCallback(args, vals) {
 async function listShiftCallback(args, val) {
     const { var: list, setVar: mutate } = argH.parseMut(val, args, 'json');
 
-    let n_pop = args.nShift != null
+    let n_shift = args.nShift != null
         ? argH.parse(args.nShift, 'int')
         : null;
 
@@ -148,21 +153,23 @@ async function listShiftCallback(args, val) {
         throw new Error('[Collection Tools | listPop] The list is empty.');
     }
 
-    if (n_pop != null && n_pop > list.length) {
-        n_pop = list.length;
+    if (n_shift != null && n_shift > list.length) {
+        n_shift = list.length;
     }
 
     /** @type {any|any[]} */
     let shifted_items;
-    if (n_pop != null && n_pop > 1) {
-        shifted_items = list.splice(list.length - n_pop, n_pop);
+    if (n_shift != null && n_shift > 1) {
+        shifted_items = list.splice(0, n_shift);
     } else {
         shifted_items = list.shift();
     }
 
     mutate(list);
 
-    return String(shifted_items);
+    return typeof shifted_items === "object"
+        ? JSON.stringify(shifted_items)
+        : String(shifted_items);
 }
 
 /**

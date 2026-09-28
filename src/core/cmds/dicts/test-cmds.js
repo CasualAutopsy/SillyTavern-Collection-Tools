@@ -4,7 +4,9 @@ import {
     dictHasOwnCallback
 } from './test-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -12,7 +14,10 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
+
+const stringEnum = EnumProviders.valueDatatype('string');
 const dictAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "object");
+
 
 async function initTestSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
@@ -26,6 +31,8 @@ async function initTestSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.STRING,
                 ],
+                enumProvider: stringEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],

@@ -9,35 +9,51 @@
       },
       "models": {
         "qwen-36": {
-          "name": "Qwen-3.6 35B-A3B Q6_K-GGUF"
+          "name": "Qwen-3.6 35B-A3B Q6_K-GGUF",
+          "limit": {
+            "context": 131072,
+            "output": 12288
+          }
         }
       }
     }
   },
+  "references": {
+    "External Library: NoxLib": {
+        "path": "../STLibs-Nox-Library",
+        "description": "External SillyTavern library extension dependency. Use for NoxLib implementation details."
+    },
+    "Extension Target: SillyTavern": {
+        "repository": "SillyTavern/SillyTavern",
+        "branch": "release",
+        "description": "The web app this extension project targets. Use for API details."
+    }
+  },
   "permission": {
-    "external_directory": {
-      "~/ML/Text/SillyTavern-Launcher/SillyTavern/public/**": "ask"
-    },
-    "edit":{
-        "tests/**/*.test.js": "allow",
-        "tests/setup.js": "deny",
-        ".opencode/soul/**/*.md": "allow",
-        ".opencode/soul/**": "allow",
-        ".opencode/soul/*.md": "allow"
-    },
-    "read": {
-        "tests/**/*.test.js": "allow",
-        "tests/setup.js": "allow",
-        "jest.config.js": "allow",
-        "webpack.config.js": "allow",
-        "package.json": "allow",
-        "src/**/*.js": "allow",
-        "src/__deprecated__/**": "deny",
-        ".opencode/soul/**/*.md": "allow",
-        ".opencode/soul/**": "allow",
-        ".opencode/soul/*.md": "allow"
-    },
+    "lsp": "deny",
+    "bash": "ask",
+    "task": "ask",
+    "webfetch": "ask",
+    "websearch": "ask",
+    "list": "allow",
     "skill": "allow",
-    "bash": "ask"
+    "question": "allow",
+    "todowrite": "allow",
+    "read": {
+        "*": "ask",
+        "tests/**": "allow"
+    },
+    "edit": {
+        "*": "deny",
+        "tests/**": "allow"
+    },
+    "grep": {
+        "*": "ask",
+        "tests/**": "allow"
+    },
+    "glob": {
+        "*": "ask",
+        "tests/**": "allow"
+    }
   }
 }

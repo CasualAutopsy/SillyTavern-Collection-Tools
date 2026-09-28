@@ -1,13 +1,16 @@
 const argH = NoxLib.SlashHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
+
 
 /**
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').NamedArguments} NamedArguments
  * @typedef {import('../../../../../../../slash-commands/SlashCommand.js').UnnamedArguments} UnnamedArguments
  */
+
 
 /**
  * Slash command callback for checking if a dictionary has a key.

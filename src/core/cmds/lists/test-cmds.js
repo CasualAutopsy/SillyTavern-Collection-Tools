@@ -1,12 +1,13 @@
 import { STContext as ctx } from '../../../external/st-context.js';
+import { STPublic as pub } from '../../../external/st-public.js';
 
 import {
     listIncludesCallback,
-    listEveryCallback,
-    listSomeCallback
 } from './test-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -14,7 +15,18 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
+const {
+    commonEnumProviders
+} = pub;
+
+
+const quickClosure = EnumProviders.quickClosure();
+
+const stringAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "string");
 const listAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "array");
+
+const boolEnumProvider = commonEnumProviders.boolean('trueFalse');
+
 
 async function initTestSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
@@ -28,7 +40,8 @@ async function initTestSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.BOOLEAN,
                 ],
-                isRequired: false,
+                enumProvider: boolEnumProvider,
+                forceEnum: true,
             }),
             SlashCommandNamedArgument.fromProps({
                 name: 'search',
@@ -37,7 +50,7 @@ async function initTestSlashCMDs() {
                     ARGUMENT_TYPE.STRING,
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
-                enumProvider: listAndShorthands,
+                enumProvider: stringAndShorthands,
                 isRequired: true,
             }),
         ],
@@ -49,75 +62,13 @@ async function initTestSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: listAndShorthands,
+                forceEnum: true,
                 isRequired: true,
-                acceptsMultiple: false,
             }),
         ],
         splitUnnamedArgument: false,
         helpString: '',
         returns: 'Whether the list includes the item',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-every',
-        callback: listEveryCallback,
-        aliases: ['nox-list-every'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to test against',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to test with',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'Whether every item in the list satisfies the condition',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-some',
-        callback: listSomeCallback,
-        aliases: ['nox-list-some'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to test against',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to test with',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'Whether any item in the list satisfies the condition',
     }));
 }
 

@@ -3,11 +3,11 @@ import { STContext as ctx } from '../../../external/st-context.js';
 import {
     listAtCallback,
     listIndexOfCallback, listLastIndexOfCallback,
-    listFindCallback, listFindLastCallback,
-    listFindIndexCallback, listFindLastIndexCallback
 } from './search-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -15,7 +15,13 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
-const listAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "array");
+
+const stringEnum = EnumProviders.valueDatatype('string');
+const numberEnum = EnumProviders.valueDatatype('number');
+const booleanEnum = EnumProviders.valueDatatype('boolean');
+
+const listAndShorthands = EnumProviders.shorthandAndValue('shorthand-w-scope', 'array');
+
 
 async function initSearchSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
@@ -29,6 +35,8 @@ async function initSearchSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.NUMBER,
                 ],
+                enumProvider: numberEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -40,8 +48,8 @@ async function initSearchSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: listAndShorthands,
+                forceEnum: true,
                 isRequired: true,
-                acceptsMultiple: false,
             }),
         ],
         splitUnnamedArgument: false,
@@ -60,7 +68,8 @@ async function initSearchSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.BOOLEAN,
                 ],
-                isRequired: false,
+                enumProvider: booleanEnum,
+                forceEnum: true,
             }),
             SlashCommandNamedArgument.fromProps({
                 name: 'search',
@@ -68,6 +77,8 @@ async function initSearchSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.STRING,
                 ],
+                enumProvider: stringEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -79,8 +90,8 @@ async function initSearchSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: listAndShorthands,
+                forceEnum: true,
                 isRequired: true,
-                acceptsMultiple: false,
             }),
         ],
         splitUnnamedArgument: false,
@@ -99,7 +110,8 @@ async function initSearchSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.BOOLEAN,
                 ],
-                isRequired: false,
+                enumProvider: booleanEnum,
+                forceEnum: true,
             }),
             SlashCommandNamedArgument.fromProps({
                 name: 'search',
@@ -107,6 +119,8 @@ async function initSearchSlashCMDs() {
                 typeList: [
                     ARGUMENT_TYPE.STRING,
                 ],
+                enumProvider: stringEnum,
+                forceEnum: true,
                 isRequired: true,
             }),
         ],
@@ -118,137 +132,13 @@ async function initSearchSlashCMDs() {
                     ARGUMENT_TYPE.VARIABLE_NAME,
                 ],
                 enumProvider: listAndShorthands,
+                forceEnum: true,
                 isRequired: true,
-                acceptsMultiple: false,
             }),
         ],
         splitUnnamedArgument: false,
         helpString: '',
         returns: 'The index of the last occurrence of the item',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-find',
-        callback: listFindCallback,
-        aliases: ['nox-list-find'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to search in',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to use for searching',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'The first item that satisfies the condition',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-find-last',
-        callback: listFindLastCallback,
-        aliases: ['nox-list-find-last'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to search in',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to use for searching',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'The last item that satisfies the condition',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-find-index',
-        callback: listFindIndexCallback,
-        aliases: ['nox-list-find-index'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to search in',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to use for searching',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'The index of the first item that satisfies the condition',
-    }));
-
-    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-        name: 'list-find-last-index',
-        callback: listFindLastIndexCallback,
-        aliases: ['nox-list-find-last-index'],
-        namedArgumentList: [
-            SlashCommandNamedArgument.fromProps({
-                name: 'list',
-                description: 'the list to search in',
-                typeList: [
-                    ARGUMENT_TYPE.LIST,
-                    ARGUMENT_TYPE.VARIABLE_NAME,
-                ],
-                enumProvider: listAndShorthands,
-                isRequired: true,
-            }),
-        ],
-        unnamedArgumentList: [
-            SlashCommandArgument.fromProps({
-                description: 'the closure to use for searching',
-                typeList: [
-                    ARGUMENT_TYPE.CLOSURE,
-                ],
-                isRequired: true,
-                acceptsMultiple: false,
-            }),
-        ],
-        splitUnnamedArgument: false,
-        helpString: '',
-        returns: 'The index of the last item that satisfies the condition',
     }));
 }
 

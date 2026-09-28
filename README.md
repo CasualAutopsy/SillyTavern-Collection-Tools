@@ -5,7 +5,7 @@ Collection Tools is a library of SillyTavern macros and slash commands for opera
 
 ## Usage
 
-For the list of available macros, send `/? macros` in the chat and scroll to the `List Utilities`, `Dictionary Utilities`(WIP), and `Collection Utilities` sections.
+For the list of available macros, send `/? macros` in the chat and scroll to the `List Utilities`, `Dictionary Utilities`, and `Collection Utilities` sections.
 
 For the list of available slash commands, type `/nox-list`, `/nox-dict`, or `/nox-collection` in the chat input or QR IDE to see available commands and their documentation.
 

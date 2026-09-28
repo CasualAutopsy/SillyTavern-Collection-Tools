@@ -7,7 +7,9 @@ import {
     listFlatCallback
 } from './trans-callbacks.js';
 
+
 const { EnumProviders } = NoxLib.SlashHandlers;
+
 
 const {
     SlashCommandParser, SlashCommand,
@@ -15,8 +17,10 @@ const {
     ARGUMENT_TYPE,
 } = ctx;
 
+
 const listAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "array");
 const allAndShorthands = EnumProviders.shorthandAndValue("shorthand-w-scope", "all");
+
 
 async function initTransSlashCMDs() {
     SlashCommandParser.addCommandObject(SlashCommand.fromProps({
