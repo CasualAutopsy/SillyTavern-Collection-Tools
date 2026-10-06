@@ -1,12 +1,16 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+const typeErrMarker = '\u0000\u001FTYPE_ERROR\u001F\u0000'
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for pushing items to a list.
@@ -15,7 +19,7 @@ const argH = NoxLib.MacroHandlers.argHandler;
  *
  * @returns {String} - The stringified length.
  */
-function listPushHandler({unnamedArgs: [rawList], list: rawVals}) {
+function listPushHandler({unnamedArgs: [rawList, rawReturnLength], list: rawVals}) {
     const {var: list, setVar: mutate} = argH.parseMut(rawList, 'json');
 
     if (!Array.isArray(list)) {
@@ -28,13 +32,19 @@ function listPushHandler({unnamedArgs: [rawList], list: rawVals}) {
         return '';
     }
 
+    const return_length = argH.stBoolCoercion(rawReturnLength);
+
     rawVals.forEach((val) => {
         list.push(argH.parse(val));
     });
 
     mutate(list);
 
-    return String(list.length);
+    if (return_length) {
+        return String(list.length);
+    } else {
+        return JSON.stringify(list);
+    }
 }
 
 /**
@@ -61,7 +71,11 @@ function listPopHandler({unnamedArgs: [rawList]}) {
 
     mutate(list);
 
-    return String(popped);
+    return typeof popped === 'string'
+        ? popped
+        : typeof popped === 'object'
+            ? JSON.stringify(popped)
+            : String(popped);
 }
 
 /**
@@ -71,7 +85,7 @@ function listPopHandler({unnamedArgs: [rawList]}) {
  *
  * @returns {String} - The stringified length.
  */
-function listUnshiftHandler({unnamedArgs: [rawList], list: rawVals}) {
+function listUnshiftHandler({unnamedArgs: [rawList, rawReturnLength], list: rawVals}) {
     const {var: list, setVar: mutate} = argH.parseMut(rawList, 'json');
 
     if (!Array.isArray(list)) {
@@ -84,13 +98,19 @@ function listUnshiftHandler({unnamedArgs: [rawList], list: rawVals}) {
         return '';
     }
 
+    const return_length = argH.stBoolCoercion(rawReturnLength);
+
     rawVals.forEach((val) => {
         list.unshift(argH.parse(val));
     });
 
     mutate(list);
 
-    return String(list.length);
+    if (return_length) {
+        return String(list.length);
+    } else {
+        return JSON.stringify(list);
+    }
 }
 
 /**
@@ -117,7 +137,11 @@ function listShiftHandler({unnamedArgs: [rawList]}) {
 
     mutate(list);
 
-    return String(shifted);
+    return typeof shifted === 'string'
+        ? shifted
+        : typeof shifted === 'object'
+            ? JSON.stringify(shifted)
+            : String(shifted);
 }
 
 /**
@@ -141,19 +165,27 @@ function listSpliceHandler({unnamedArgs: [rawList, rawStart, rawDeleteCount, raw
             ? argH.parse(rawDeleteCount, 'int')
             : undefined;
 
-    /** @type {Object|any[]|undefined} */
-    let insert = undefined;
-    try {
-        insert = argH.parse(rawInsert, 'json');
-
-        if (!Array.isArray(insert)) {
-            console.warn('[Collection Tools | listSplice] Insert is not a list.');
-            throw new TypeError('Insert is not a list.');
-        }
-    } catch {
-        // Skip using insert if it's not valid JSON
+    if (!Number.isInteger(start)) {
+        console.error('[Collection Tools | listSplice] The start index is not an integer.');
+        return '';
+    }
+    if (!Number.isInteger(delete_count) && delete_count != null) {
+        console.error('[Collection Tools | listSplice] The delete count is not an integer.');
+        return '';
     }
 
+    /** @type {Object|any[]|undefined} */
+    let insert;
+    try {
+        insert = rawInsert
+            ? argH.parse(rawInsert, 'json')
+            : undefined;
+    } catch {}
+
+    if (typeof insert !== 'undefined' && !Array.isArray(insert)) {
+        console.error('[Collection Tools | listSplice] Insert is not a list.');
+        return '';
+    }
 
     if (insert != null && Array.isArray(insert) && delete_count != null) {
         list.splice(start, delete_count, ...insert);
@@ -183,6 +215,11 @@ function listFillHandler({unnamedArgs: [rawList, rawVal], list: rawIndices}) {
 
     const fill_val = argH.parse(rawVal);
 
+    if (fill_val === undefined) {
+        console.error('[Collection Tools | listFill] The fill value is undefined.');
+        return '';
+    }
+
     const
         start = rawIndices?.[0] != null
             ? argH.parse(rawIndices[0], 'int')
@@ -190,6 +227,15 @@ function listFillHandler({unnamedArgs: [rawList, rawVal], list: rawIndices}) {
         end = rawIndices?.[1] != null
             ? argH.parse(rawIndices[1], 'int')
             : undefined;
+
+    if (!Number.isInteger(start) && start != null) {
+        console.error('[Collection Tools | listFill] The start index is not an integer.');
+        return '';
+    }
+    if (!Number.isInteger(end) && end != null) {
+        console.error('[Collection Tools | listFill] The end index is not an integer.');
+        return '';
+    }
 
     list.fill(fill_val, start, end);
 
@@ -215,7 +261,7 @@ function listCopyWithinHandler({unnamedArgs: [rawList], list: rawIndices}) {
 
     if (rawIndices == null || rawIndices.length < 2) {
         const e_length = rawIndices != null
-            ? rawIndices.length + 1
+            ? 2
             : 1;
 
         console.error(`[Collection Tools | listCopyWithin] Expected at least 3 arguments, but got ${e_length}.`);
@@ -225,9 +271,22 @@ function listCopyWithinHandler({unnamedArgs: [rawList], list: rawIndices}) {
     const
         target = argH.parse(rawIndices[0], 'int'),
         start = argH.parse(rawIndices[1], 'int'),
-        end = rawIndices[2] != null
+        end = rawIndices?.[2] != null
             ? argH.parse(rawIndices[2], 'int')
             : undefined;
+
+    if (!Number.isInteger(target)) {
+        console.error('[Collection Tools | listCopyWithin] The target index is not an integer.');
+        return '';
+    }
+    if (!Number.isInteger(start)) {
+        console.error('[Collection Tools | listCopyWithin] The start index is not an integer.');
+        return '';
+    }
+    if (!Number.isInteger(end) && end != null) {
+        console.error('[Collection Tools | listCopyWithin] The end index is not an integer.');
+        return '';
+    }
 
     list.copyWithin(target, start, end);
 
@@ -280,10 +339,11 @@ function listReverseHandler({unnamedArgs: [rawList]}) {
     return JSON.stringify(list);
 }
 
+
 export {
     listPushHandler, listPopHandler,
     listUnshiftHandler, listShiftHandler,
     listSpliceHandler,
     listFillHandler, listCopyWithinHandler,
-    listSortHandler, listReverseHandler
+    listSortHandler, listReverseHandler,
 };

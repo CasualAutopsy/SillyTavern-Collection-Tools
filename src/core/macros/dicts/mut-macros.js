@@ -5,9 +5,11 @@ import {
     dictDefineHandler, dictMultiDefineHandler
 } from './mut-handlers.js';
 
+
 const {
     macros
 } = ctx;
+
 
 async function initMutMacros() {
     macros.register(
@@ -160,5 +162,6 @@ async function initMutMacros() {
         }
     );
 }
+
 
 export default initMutMacros;

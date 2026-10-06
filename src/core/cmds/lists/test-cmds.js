@@ -72,4 +72,5 @@ async function initTestSlashCMDs() {
     }));
 }
 
+
 export default initTestSlashCMDs;

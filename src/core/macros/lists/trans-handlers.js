@@ -1,12 +1,15 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for slicing a list.
@@ -161,10 +164,11 @@ function listToReverseHandler({unnamedArgs: [rawList]}) {
     return JSON.stringify(list.toReversed());
 }
 
+
 export {
     listSliceHandler,
     listConcatHandler,
     listFlatHandler,
     listToSpliceHandler,
-    listToSortHandler, listToReverseHandler
+    listToSortHandler, listToReverseHandler,
 };

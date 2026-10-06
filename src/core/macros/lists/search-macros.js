@@ -2,12 +2,14 @@ import { STContext as ctx } from '../../../external/st-context.js';
 
 import {
     listAtHandler,
-    listIndexOfHandler, listLastIndexOfHandler
+    listIndexOfHandler,
 } from './search-handlers.js';
+
 
 const {
     macros
 } = ctx;
+
 
 async function initSearchMacros() {
     macros.register(
@@ -77,64 +79,26 @@ async function initSearchMacros() {
                     defaultValue: 'true',
                     optional: true,
                 },
+                {
+                    name: 'reverse',
+                    description: 'Whether to search from the end of the list.',
+                    sampleValue: 'true, false, 1, 0, on, off',
+                    defaultValue: 'false',
+                    optional: true,
+                },
             ],
             handler: listIndexOfHandler,
-            displayOverride: '{{listIndexOf::list::search::[parse]}}',
+            displayOverride: '{{listIndexOf::list::search::[parse]::[reverse]}}',
             exampleUsage: [
                 '{{listIndexOf::[1, 2, 3]::1}}',
-                '{{listIndexOf::$globalVar::2}}',
-                '{{listIndexOf::.localVar::3}}',
-                '{{listIndexOf::[1, 2, 3]::1::true}}',
-                '{{listIndexOf::["1", "2", "3"]::2::false}}',
+                '{{listIndexOf::[1, 2, 3]::1::false}}',
+                '{{listIndexOf::[1, 2, 3]::1::false::true}}',
+                '{{listIndexOf::[1, 2, 3]::1::true::true}}',
             ],
             returns: 'The index of the first occurrence of the item',
         }
     );
-
-    macros.register(
-        'listLastIndexOf',
-        {
-            category: 'Collection Tools - List Search',
-            description: 'A search macro that gets the index of the last occurrence of an item from a list and returns it.',
-            aliases: [
-                {
-                    alias: 'noxListLastIndexOf',
-                    visible: true,
-                },
-            ],
-            unnamedArgs: [
-                {
-                    name: 'list',
-                    description: 'The list to search in.',
-                    sampleValue: '[1, 2, 3], .localVar, $globalVar',
-                    optional: false,
-                },
-                {
-                    name: 'search',
-                    description: 'The item to search for.',
-                    sampleValue: '1, 2, 3',
-                    optional: false,
-                },
-                {
-                    name: 'parse',
-                    description: 'Whether to parse the search element\'s data type.',
-                    sampleValue: 'true, false, 1, 0, on, off',
-                    defaultValue: 'true',
-                    optional: true,
-                },
-            ],
-            handler: listLastIndexOfHandler,
-            displayOverride: '{{listLastIndexOf::list::search::[parse]}}',
-            exampleUsage: [
-                '{{listLastIndexOf::[1, 2, 3]::1}}',
-                '{{listLastIndexOf::$globalVar::2}}',
-                '{{listLastIndexOf::.localVar::3}}',
-                '{{listLastIndexOf::[1, 2, 3]::1::true}}',
-                '{{listLastIndexOf::["1", "2", "3"]::2::false}}',
-            ],
-            returns: 'The index of the last occurrence of the item',
-        }
-    );
 }
+
 
 export default initSearchMacros;

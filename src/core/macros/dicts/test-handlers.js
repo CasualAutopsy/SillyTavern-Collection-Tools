@@ -1,12 +1,15 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for checking if a dictionary has a key.
@@ -29,5 +32,6 @@ function dictHasOwnHandler({unnamedArgs: [rawSearch, rawFind]}) {
 
     return String(search.hasOwnProperty(find));
 }
+
 
 export { dictHasOwnHandler };

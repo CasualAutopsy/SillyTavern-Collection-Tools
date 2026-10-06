@@ -8,9 +8,11 @@ import {
     listSortHandler, listReverseHandler
 } from './mut-handlers.js';
 
+
 const {
     macros
 } = ctx;
+
 
 async function initMutMacros() {
     macros.register(
@@ -31,17 +33,24 @@ async function initMutMacros() {
                     sampleValue: '[1, 2, 3], .localVar, $globalVar',
                     optional: false,
                 },
+                {
+                    name: 'return_length',
+                    description: 'Whether to return the new length of the list.',
+                    sampleValue: 'true, false, on, 0',
+                    optional: false,
+                },
             ],
             list: {
                 min: 1,
             },
             handler: listPushHandler,
-            displayOverride: '{{listPush::list::[item1]::[item2]::...}}',
+            displayOverride: '{{listPush::list::[return_length]::[item1]::[item2]::...}}',
             exampleUsage: [
-                '{{listPush::[1, 2, 3]::4}}',
-                '{{listPush::$globalVar::.localVar}}',
+                '{{listPush::[1, 2, 3]::true::4}}',
+                '{{listPush::$globalVar::false::.localVar}}',
+                '{{listPush::["a","b","c"]::::d::e}}',
             ],
-            returns: 'The new length of the list',
+            returns: 'The new list or new length of the list.',
         }
     );
 
@@ -92,17 +101,24 @@ async function initMutMacros() {
                     sampleValue: '[1, 2, 3], .localVar, $globalVar',
                     optional: false,
                 },
+                {
+                    name: 'return_length',
+                    description: 'Whether to return the new length of the list.',
+                    sampleValue: 'true, false, on, 0',
+                    optional: false,
+                },
             ],
             list: {
                 min: 1,
             },
             handler: listUnshiftHandler,
-            displayOverride: '{{listUnshift::list::[item1]::[item2]::...}}',
+            displayOverride: '{{listUnshift::list::[return_length]::[item1]::[item2]::...}}',
             exampleUsage: [
-                '{{listUnshift::[1, 2, 3]::4}}',
-                '{{listUnshift::$globalVar::.localVar}}',
+                '{{listUnshift::[1, 2, 3]::true::4}}',
+                '{{listUnshift::$globalVar::false::.localVar}}',
+                '{{listUnshift::["a","b","c"]::::d::e}}',
             ],
-            returns: 'The new length of the list',
+            returns: 'The new list or new length of the list.',
         }
     );
 
@@ -318,5 +334,6 @@ async function initMutMacros() {
         }
     );
 }
+
 
 export default initMutMacros;

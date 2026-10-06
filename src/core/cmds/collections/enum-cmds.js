@@ -6,6 +6,7 @@ import {
     collMapCallback,
     collForEachCallback,
     collFilterCallback,
+    collReduceCallback,
 } from './enum-callbacks.js';
 
 

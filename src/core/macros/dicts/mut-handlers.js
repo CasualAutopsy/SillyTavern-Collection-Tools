@@ -1,12 +1,15 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for assigning a value to a dictionary
@@ -102,6 +105,7 @@ function dictMultiDefineHandler({unnamedArgs: [rawTarget, rawPropMap]}) {
 
     return JSON.stringify(target);
 }
+
 
 export {
     dictAssignHandler, dictDeleteHandler,

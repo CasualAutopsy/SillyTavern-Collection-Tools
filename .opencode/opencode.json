@@ -19,11 +19,11 @@
     }
   },
   "references": {
-    "External Library: NoxLib": {
+    "noxlib": {
         "path": "../STLibs-Nox-Library",
         "description": "External SillyTavern library extension dependency. Use for NoxLib implementation details."
     },
-    "Extension Target: SillyTavern": {
+    "sillytavern": {
         "repository": "SillyTavern/SillyTavern",
         "branch": "release",
         "description": "The web app this extension project targets. Use for API details."
@@ -44,7 +44,7 @@
         "tests/**": "allow"
     },
     "edit": {
-        "*": "deny",
+        "*": "ask",
         "tests/**": "allow"
     },
     "grep": {

@@ -1,12 +1,16 @@
 const argH = NoxLib.MacroHandlers.argHandler;
+const dataH = NoxLib.Utilities.DataHelper;
+
 
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for checking if a list includes an item.
@@ -16,10 +20,6 @@ const argH = NoxLib.MacroHandlers.argHandler;
  * @returns {String} - The stringified value.
  */
 function listIncludesHandler({unnamedArgs: [rawList, rawSearch, rawParse]}) {
-    const parse_search_element = argH.stBoolCoercion(rawParse);
-    const search_element = parse_search_element
-        ? argH.parse(rawSearch)
-        : rawSearch;
     const list = argH.parseVar(rawList, 'json');
 
     if (!Array.isArray(list)) {
@@ -27,8 +27,39 @@ function listIncludesHandler({unnamedArgs: [rawList, rawSearch, rawParse]}) {
         return '';
     }
 
-    return String(list.includes(search_element));
+    const parse_search_element = argH.stBoolCoercion(rawParse);
+    const search_element = parse_search_element
+        ? argH.parse(rawSearch)
+        : rawSearch;
+
+    const is_json = search_element != null && typeof search_element === 'object';
+    const is_array = is_json && Array.isArray(search_element);
+
+    if (is_json && is_array) {
+
+        return String(
+            list.some(
+                item =>
+                    Array.isArray(item) &&
+                    dataH.arrayEquality(item, search_element)
+            )
+        );
+    }
+    else if (is_json) {
+
+        return String(
+            list.some(
+                item =>
+                    dataH.deepEquality(item, search_element)
+            )
+        );
+    }
+    else {
+
+        return String(list.includes(search_element));
+    }
 }
+
 
 export {
     listIncludesHandler

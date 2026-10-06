@@ -4,9 +4,11 @@ import {
     listIncludesHandler
 } from './test-handlers.js';
 
+
 const {
     macros
 } = ctx;
+
 
 async function initTestMacros() {
     macros.register(
@@ -54,5 +56,6 @@ async function initTestMacros() {
         }
     );
 }
+
 
 export default initTestMacros;

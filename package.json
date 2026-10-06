@@ -1,19 +1,16 @@
 {
   "name": "sillytavern-collection-tools",
-  "version": "2.0.0-alpha",
+  "version": "2.1.0-alpha",
   "description": "Collection Tools is a library of SillyTavern macros and slash commands for operations related to lists and dictionaries.",
   "type": "module",
   "scripts": {
     "build": "webpack --mode production",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --verbose",
-    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
-    "test:cov": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage --ci",
-    "agent:tui": "opencode"
+    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch"
   },
   "devDependencies": {
     "@babel/preset-env": "^8.0.5",
     "babel-loader": "^10.1.1",
-    "happy-dom": "^20.14.5",
     "jest": "^30.5.1",
     "opencode-ai": "^1.18.32",
     "terser-webpack-plugin": "^5.6.1",

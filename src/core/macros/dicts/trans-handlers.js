@@ -1,12 +1,15 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for turning a list of key/value
@@ -45,5 +48,6 @@ function fromEntriesHandler({unnamedArgs: [rawEntries], list: rawList}) {
         return JSON.stringify(Object.fromEntries(list));
     }
 }
+
 
 export { fromEntriesHandler };

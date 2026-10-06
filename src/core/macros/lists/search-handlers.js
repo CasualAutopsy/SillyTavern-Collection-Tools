@@ -1,12 +1,15 @@
 const argH = NoxLib.MacroHandlers.argHandler;
 
+
 /**
  * @import {} from '../../../../global'
  */
 
+
 /**
  * @typedef {import('../../../../../../../macros/engine/MacroRegistry').MacroExecutionContext} MacroExecutionContext
  */
+
 
 /**
  * Macro handler for getting an item from a list.
@@ -33,17 +36,13 @@ function listAtHandler({unnamedArgs: [rawList, rawIndex]}) {
 
 /**
  * Macro handler for getting the index
- * of the first occurrence of an item from a list.
+ * of the first or last occurrence of an item from a list.
  *
  * @param {MacroExecutionContext} param0 - The macro execution context.
  *
  * @returns {String} - The stringified value.
  */
-function listIndexOfHandler({unnamedArgs: [rawList, rawSearch, rawParse]}) {
-    const parse_search_element = argH.stBoolCoercion(rawParse);
-    const search_element = parse_search_element
-        ? argH.parse(rawSearch)
-        : rawSearch;
+function listIndexOfHandler({unnamedArgs: [rawList, rawSearch, rawParse, rawReverse]}) {
     const list = argH.parseVar(rawList, 'json');
 
     if (!Array.isArray(list)) {
@@ -51,33 +50,26 @@ function listIndexOfHandler({unnamedArgs: [rawList, rawSearch, rawParse]}) {
         return '';
     }
 
-    return String(list.indexOf(search_element));
-}
-
-/**
- * Macro handler for getting the index
- * of the last occurrence of an item from a list.
- *
- * @param {MacroExecutionContext} param0 - The macro execution context.
- *
- * @returns {String} - The stringified value.
- */
-function listLastIndexOfHandler({unnamedArgs: [rawList, rawSearch, rawParse]}) {
     const parse_search_element = argH.stBoolCoercion(rawParse);
     const search_element = parse_search_element
         ? argH.parse(rawSearch)
         : rawSearch;
-    const list = argH.parseVar(rawList, 'json');
 
-    if (!Array.isArray(list)) {
-        console.error('[Collection Tools | listLastIndexOf] The input is not a list.');
-        return '';
-    }
+    const reverse = argH.stBoolCoercion(rawReverse);
 
-    return String(list.lastIndexOf(search_element));
+    const result = reverse
+        ? list.lastIndexOf(search_element)
+        : list.indexOf(search_element);
+
+    return typeof result === 'string'
+        ? result
+        : typeof result === 'object'
+            ? JSON.stringify(result)
+            : String(result);
 }
+
 
 export {
     listAtHandler,
-    listIndexOfHandler, listLastIndexOfHandler
+    listIndexOfHandler,
 };

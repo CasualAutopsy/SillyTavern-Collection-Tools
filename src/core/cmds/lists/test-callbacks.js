@@ -2,6 +2,7 @@ import { STPublic as pub } from '../../../external/st-public.js';
 
 
 const argH = NoxLib.SlashHandlers.argHandler;
+const dataH = NoxLib.Utilities.DataHelper;
 
 
 const {
@@ -9,11 +10,6 @@ const {
     SlashCommandBreakController,
     SlashCommandNamedArgumentAssignment
 } = pub;
-
-
-/**
- * @import {} from '../../../../global.js'
- */
 
 
 /**
@@ -35,13 +31,20 @@ const {
  * @returns {Promise<string>} - The stringified value.
  */
 async function listIncludesCallback(args, val) {
-
     if (typeof args.parse !== 'string') {
+
         throw new TypeError('[Collection Tools | list-includes] Expected \'parse\' to be a value. Got a closure instead.');
     }
-
     if (typeof args.search !== 'string') {
+
         throw new TypeError('[Collection Tools | list-includes] Expected \'search\' to be a value. Got a closure instead.');
+    }
+
+    const list = argH.parseVar(val, args, 'json');
+
+    if (!Array.isArray(list)) {
+
+        throw new TypeError('[Collection Tools | list-includes] The input is not a list.');
     }
 
     const parse_search_element = args.parse
@@ -50,14 +53,35 @@ async function listIncludesCallback(args, val) {
     const search_element = parse_search_element
         ? argH.parseVar(args.search, args)
         : args.search;
-    const list = argH.parseVar(val, args, 'json');
 
-    if (!Array.isArray(list)) {
-        throw new TypeError('[Collection Tools | list-includes] The input is not a list.');
+    const is_json = search_element != null && typeof search_element === 'object';
+    const is_array = is_json && Array.isArray(search_element);
+
+    if (is_json && is_array) {
+
+        return String(
+            list.some(
+                item =>
+                    Array.isArray(item) &&
+                    dataH.arrayEquality(item, search_element)
+            )
+        );
     }
+    else if (is_json) {
 
-    return String(list.includes(search_element));
+        return String(
+            list.some(
+                item =>
+                    dataH.deepEquality(item, search_element)
+            )
+        );
+    }
+    else {
+
+        return String(list.includes(search_element));
+    }
 }
+
 
 export {
     listIncludesCallback,

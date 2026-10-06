@@ -2,9 +2,11 @@ import { STContext as ctx } from '../../../external/st-context.js';
 
 import { fromEntriesHandler } from './trans-handlers.js';
 
+
 const {
     macros
 } = ctx;
+
 
 async function initTransMacros() {
     macros.register(
@@ -41,5 +43,6 @@ async function initTransMacros() {
         }
     );
 }
+
 
 export default initTransMacros;

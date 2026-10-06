@@ -1,9 +1,5 @@
-
-
 import yaml from 'yaml';
-
-import { jest } from '@jest/globals';
-
+import lodash from 'lodash';
 
 
 const _varStore = {
@@ -32,8 +28,9 @@ globalThis.SillyTavern = {
     }),
 
     libs: {
-        yaml
-    }
+        yaml,
+        lodash,
+    },
 };
 
 
@@ -51,93 +48,176 @@ export function resetVariables() {
 
 
 await (async () => {
+    const { SlashArgClass } = await import('../../STLibs-Nox-Library/libs/core/cmds/arg-handling.js');
     const { MacroHandlers } = await import('../../STLibs-Nox-Library/libs/core/macros/index.js');
-    globalThis.NoxLib = { MacroHandlers: MacroHandlers };
+    const { Utilities } = await import('../../STLibs-Nox-Library/libs/core/utils/index.js');
+
+    globalThis.NoxLib = {
+        SlashHandlers: {
+            argHandler: SlashArgClass,
+        },
+        MacroHandlers: MacroHandlers,
+        Utilities: Utilities,
+    };
 })();
 
+
+// ============================================================================
+// Mock: SillyTavern SlashCommandClosure system
+// ============================================================================
+//
+// Purpose
+// -------
+// Replaces SillyTavern's STscript-based `SlashCommandClosure` with a minimal
+// test double that accepts a plain function. The function signature is:
+//
+//     (arg0: string, arg1?: string, arg2?: string, ...argN?: string) => string
+//
+// The callbacks in this project populate `argumentList` (parameter names) and
+// `providedArgumentList` (parameter values) before calling `execute()`. The
+// mock invokes the stored function with those values and returns a result
+// object whose shape matches `SlashCommandClosureResult`.
+//
+// Source: <SillyTavern dir>/public/scripts/slash-commands/SlashCommandClosure.js
+// ============================================================================
+
+
 /**
- * @class MacroArgClass
- * ====================
- * @method varScope
- *
- * @param {string} arg - The argument to scan for a shorthand var.
- *
- * @returns {[string, string]|null} The variable scope or null if no shorthand var is found.
+ * @class SlashCommandBreakController
  *
  * @description
- * A method for determining the shorthand variables scope if a shorthand exists.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
+ * Minimal mock of SillyTavern's `SlashCommandBreakController`.
+ * Tracks whether execution was broken via the `/break` command.
  *
- * ---
- *
- * @method resolve
- *
- * @param {string} arg - The argument to resolve.
- *
- * @returns {string} The resolved argument.
- *
- * @description
- * A method for resolving a shorthand variable to its value.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
- *
- * ---
- *
- * @method parse
- *
- * @param {string} arg - The argument to parse.
- * @param {undefined|"int"|"float"|"bool"|"json"|"yaml"} toType - The datatype to parse the arg to. (Default: `undefined`)
- *
- * @returns {any} The parsed resolved shorthand.
- *
- * @description
- * A method for resolving a shorthand variable and parsing it to a specified datatype.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
- *
- * ---
- *
- * @method parseVar
- *
- * @param {string} arg - The argument to parse.
- * @param {undefined|"int"|"float"|"bool"|"json"|"yaml"} toType - The datatype to parse the arg to. (Default: `undefined`)
- *
- * @returns {any} The parsed resolved shorthand.
- *
- * @throws {TypeError} - Throws a TypeError if the argument is not parsable to the specified datatype.
- *
- * @description
- * A method for resolving a shorthand variable and parsing it to a specified datatype.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
- *
- * ---
- *
- * @method parseMut
- *
- * @param {string} arg - The argument to parse.
- * @param {undefined|"int"|"float"|"bool"|"json"|"yaml"} toType - The datatype to parse the arg to. (Default: `undefined`)
- *
- * @returns {{var: any, setVar: (val: any) => void}} The parsed resolved shorthand and a function for mutability.
- *
- * @throws {Error} - Throws an Error if the variable does not exist within the shorthand scope.
- *
- * @description
- * A method for resolving a shorthand variable and parsing it to a specified datatype and returns it with a function for mutability.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
- *
- * ---
- *
- * @method stBoolCoercion
- *
- * @param {string} arg - The argument to parse.
- *
- * @returns {boolean} The coerced boolean value.
- *
- * @description
- * A method for coercing any SillyTavern string value into a SillyTavern bool datatype.
- * The relative file path to the method is:
- * `/home/casauto/ML/Text/SillyTavern-Launcher/SillyTavern/public/scripts/extensions/third-party/STLibs-Nox-Library/libs/core/macros/arg-handling.js`
+ * Source: <SillyTavern dir>/public/scripts/slash-commands/SlashCommandBreakController.js
  */
+export class SlashCommandBreakController {
+    /** @type {boolean} */
+    isBreak = false;
+
+    /**
+     * Signals that execution should break.
+     */
+    break() {
+        this.isBreak = true;
+    }
+}
+
+
+/**
+ * @class SlashCommandNamedArgumentAssignment
+ *
+ * @description
+ * Minimal mock of SillyTavern's `SlashCommandNamedArgumentAssignment`.
+ * Holds a parameter name and its assigned string value.
+ *
+ * Source: <SillyTavern dir>/public/scripts/slash-commands/SlashCommandNamedArgumentAssignment.js
+ */
+export class SlashCommandNamedArgumentAssignment {
+    /** @type {number} */
+    start;
+
+    /** @type {number} */
+    end;
+
+    /** @type {string} */
+    name;
+
+    /** @type {string} */
+    value;
+}
+
+
+/**
+ * @class SlashCommandClosure
+ *
+ * @description
+ * Minimal mock of SillyTavern's `SlashCommandClosure`.
+ *
+ * Instead of parsing STscript text (`{:/...:/}`), this mock wraps a
+ * plain function. The function receives the argument values in order
+ * and must return a string.
+ *
+ * Usage pattern (mirrors the real callbacks):
+ *
+ *   1. Create:   const closure = new SlashCommandClosure(fn);
+ *   2. Set params: closure.argumentList.push({name: 'value'});
+ *   3. Set values: closure.providedArgumentList[0].value = '42';
+ *   4. Execute:  const result = await closure.execute();
+ *   5. Read:     result.pipe   // string output
+ *                result.isBreak // boolean
+ *                result.isAborted // boolean
+ *
+ * The constructor also accepts a second `options` object for advanced
+ * control:
+ *
+ *   - options.breakOnCondition: (argValues: string[]) => boolean
+ *       If the function returns true, execute() sets isBreak = true
+ *       without invoking the wrapped function.
+ *
+ * Source: <SillyTavern dir>/public/scripts/slash-commands/SlashCommandClosure.js
+ */
+export class SlashCommandClosure {
+    /** @type {(arg0: string, ...args: string[]) => string} */
+    #fn;
+
+    /** @type {SlashCommandNamedArgumentAssignment[]} */
+    argumentList = [];
+
+    /** @type {SlashCommandNamedArgumentAssignment[]} */
+    providedArgumentList = [];
+
+    /** @type {SlashCommandBreakController} */
+    breakController = new SlashCommandBreakController();
+
+    /** @type {{breakOnCondition?: (argValues: string[]) => boolean} | null} */
+    #options;
+
+    /**
+     * @param {(arg0: string, ...args: string[]) => string} fn - The function to invoke on execute().
+     * @param {{breakOnCondition?: (argValues: string[]) => boolean} | null} [options] - Optional configuration.
+     */
+    constructor(fn, options = null) {
+        this.#fn = fn;
+        this.#options = options;
+    }
+
+    /**
+     * Executes the wrapped function with the provided argument values.
+     *
+     * @returns {Promise<{pipe: string, isBreak: boolean, isAborted: boolean}>}
+     */
+    async execute() {
+        if (this.breakController?.isBreak) {
+            return {
+                pipe: '',
+                isBreak: true,
+                isAborted: false,
+            };
+        }
+
+        if (this.#options?.breakOnCondition) {
+            const argValues = this.providedArgumentList.map(a => a.value);
+
+            if (this.#options.breakOnCondition(argValues)) {
+                this.breakController.break();
+
+                return {
+                    pipe: '',
+                    isBreak: true,
+                    isAborted: false,
+                };
+            }
+        }
+
+        const argValues = this.providedArgumentList.map(a => a.value);
+
+        const result = this.#fn(...argValues);
+
+        return {
+            pipe: result,
+            isBreak: false,
+            isAborted: false,
+        };
+    }
+}
